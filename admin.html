@@ -356,18 +356,27 @@ const qp = new URLSearchParams(location.search);
 if (qp.get('api')) lsSet(LS.api, qp.get('api'));
 const API = (SCRIPT_URL || lsGet(LS.api, '') || '').trim();
 
+// เลิกรอหลัง 20 วินาที กันหน้าจอค้าง (เช่น ปุ่มตรวจการเชื่อมต่อค้างที่ "กำลังตรวจ…")
+const API_TIMEOUT_MS = 20000;
+async function fetchJson(url, opts){
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), API_TIMEOUT_MS);
+  try {
+    const r = await fetch(url, { ...opts, redirect:'follow', signal: ctl.signal });
+    if (!r.ok) throw new Error('http ' + r.status);
+    return await r.json();
+  } catch(e) {
+    throw e.name === 'AbortError' ? new Error('timeout') : e;
+  } finally { clearTimeout(t); }
+}
 async function apiGet(params){
   if (!API) throw new Error('no_api');
   const u = API + (API.includes('?') ? '&' : '?') + new URLSearchParams(params).toString();
-  const r = await fetch(u, { method:'GET', redirect:'follow' });
-  if (!r.ok) throw new Error('http ' + r.status);
-  return r.json();
+  return fetchJson(u, { method:'GET' });
 }
 async function apiPost(body){
   if (!API) throw new Error('no_api');
-  const r = await fetch(API, { method:'POST', redirect:'follow', body: JSON.stringify(body) }); // text/plain = ไม่มี preflight
-  if (!r.ok) throw new Error('http ' + r.status);
-  return r.json();
+  return fetchJson(API, { method:'POST', body: JSON.stringify(body) }); // text/plain = ไม่มี preflight
 }
 
 let CFG = { branches: [], hasSalesList: false, loaded: false };
@@ -483,7 +492,8 @@ async function runDiag(){
   steps.push(/\/exec(\?|$)/.test(API) ? ['ok', 'ใส่ URL ของ Apps Script แล้ว', ''] : ['bad', 'URL ไม่ได้ลงท้ายด้วย /exec', 'ต้องใช้ Web app URL จาก Deploy (ลงท้าย /exec) ไม่ใช่ลิงก์หน้าแก้ไขสคริปต์หรือ /dev']);
   let ping;
   try { ping = await apiGet({ action:'ping' }); }
-  catch(e) { steps.push(['bad', 'ติดต่อ Apps Script ไม่ได้', 'ตรวจการ Deploy: Execute as = Me และ Who has access = Anyone (ห้ามเลือก Anyone with Google account) หรือเช็กว่าอินเทอร์เน็ตใช้งานได้']); skip(['รหัสผู้ดูแล', 'ข้อมูลในชีต Leads']); paint(); return; }
+  catch(e) { if (e.message === 'timeout') { steps.push(['bad', 'Apps Script ตอบช้าเกิน 20 วินาที', 'กดตรวจการเชื่อมต่ออีกครั้ง ถ้ายังช้าอยู่ให้เช็กสัญญาณอินเทอร์เน็ต']); skip(['รหัสผู้ดูแล', 'ข้อมูลในชีต Leads']); paint(); return; }
+    steps.push(['bad', 'ติดต่อ Apps Script ไม่ได้', 'ตรวจการ Deploy: Execute as = Me และ Who has access = Anyone (ห้ามเลือก Anyone with Google account) หรือเช็กว่าอินเทอร์เน็ตใช้งานได้']); skip(['รหัสผู้ดูแล', 'ข้อมูลในชีต Leads']); paint(); return; }
   if (!ping || ping.service !== 'truexlotus-lead') { steps.push(['bad', 'URL นี้ไม่ใช่สคริปต์ของระบบนี้', 'ตรวจว่าวางโค้ด Code.gs แล้ว Deploy และคัดลอก URL ของ deployment นั้น']); skip(['รหัสผู้ดูแล', 'ข้อมูลในชีต Leads']); paint(); return; }
   steps.push((ping.version || 1) >= 2 ? ['ok', 'ติดต่อ Apps Script ได้', ''] : ['bad', 'หลังบ้านยังเป็นเวอร์ชันเก่า', 'วาง Code.gs ชุดใหม่ แล้วไปที่ Deploy → Manage deployments → Edit → Version: New version']);
   let list;

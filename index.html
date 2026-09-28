@@ -476,28 +476,29 @@ $('#phone').addEventListener('input', e => {
 async function checkDup(p){
   const my = ++phoneReq;
   try {
-    const r = await apiGet({action:'check', phone:p});
+    const r = await apiGet({action:'check', phone:p, code: lsGet(LS.sales, '')});
     if (my !== phoneReq || $('#phone').value !== p) return;
     if (r.ok && r.found) showDup(Object.assign({phone:p}, r.lead)); else if (F.mode !== 'update') resetDup();
   } catch(e) { /* ออฟไลน์: หลังบ้านจะตรวจซ้ำตอนส่ง */ }
 }
-function hideDup(){ F.dupLead = null; $('#dupBox').classList.add('hidden'); }
+function hideDup(){ F.dupLead = null; $('#dupBox').classList.add('hidden'); $('#custName').placeholder = ''; $('#shopName').placeholder = ''; }
 function resetDup(){ F.mode = 'new'; hideDup(); }
 function showDup(lead){
   F.dupLead = lead; F.mode = 'pending';
   const b = $('#dupBox'); b.className = 'dup';
-  b.innerHTML = `<b>เบอร์นี้เคยบันทึกแล้ว</b><div>ร้าน ${esc(lead.shopName)} (${esc(lead.custName)}) · ${esc(lead.district || '')}<br>บันทึกโดย ${esc(lead.salesCode)} เมื่อ ${esc(thDate(lead.updatedAt || lead.createdAt))} · เข้าพบแล้ว ${esc(lead.visitCount || 1)} ครั้ง<br>ผลล่าสุด: เน็ตทรู ${esc(lead.netResult)} / โลตัส ${esc(lead.lotusResult)}</div>
+  b.innerHTML = `<b>เบอร์นี้เคยบันทึกแล้ว</b><div>ร้าน ${esc(lead.shopHint || '')}${lead.shopType ? ' (' + esc(lead.shopType) + ')' : ''} · ${esc(lead.district || '')}<br>เข้าพบล่าสุด ${esc(thDate(lead.updatedAt || lead.createdAt))} · เข้าพบแล้ว ${esc(lead.visitCount || 1)} ครั้ง</div>
   <div class="acts"><button type="button" class="btn lotus sm" id="dupUpd">อัปเดต Lead เดิม</button><button type="button" class="btn ghost sm" id="dupCancel">ยกเลิกและล้างฟอร์ม</button></div>`;
   $('#dupUpd').onclick = () => {
     F.mode = 'update';
-    if (!$('#custName').value) $('#custName').value = lead.custName || '';
-    if (!$('#shopName').value) $('#shopName').value = lead.shopName || '';
+    // ระบบไม่ส่งชื่อเต็มกลับมา — เว้นว่างได้ หลังบ้านจะใช้ชื่อเดิมในชีต
+    $('#custName').placeholder = 'เว้นว่างได้ — ใช้ชื่อเดิม';
+    $('#shopName').placeholder = 'เว้นว่างได้ — ใช้ชื่อเดิม';
+    clearBad($('.fld[data-f="custName"]')); clearBad($('.fld[data-f="shopName"]'));
     if (!$('#shopType').value && OPT.shopType.includes(lead.shopType)) $('#shopType').value = lead.shopType;
     if (!$('#district').value && OPT.district.includes(lead.district)) $('#district').value = lead.district;
-    if (!$('#installDate').value && lead.installDate) $('#installDate').value = lead.installDate;
     updateVisibility();
     b.className = 'dup upd';
-    b.innerHTML = `<b>กำลังอัปเดต Lead เดิม</b> — ร้าน ${esc(lead.shopName)} (เข้าพบครั้งที่ ${(Number(lead.visitCount)||1)+1}) กรอกผลการเข้าพบครั้งนี้แล้วกดบันทึก<div class="acts"><button type="button" class="btn ghost sm" id="dupUndo">ยกเลิกการอัปเดต</button></div>`;
+    b.innerHTML = `<b>กำลังอัปเดต Lead เดิม</b> — ร้าน ${esc(lead.shopHint || '')} (เข้าพบครั้งที่ ${(Number(lead.visitCount)||1)+1}) กรอกผลการเข้าพบครั้งนี้แล้วกดบันทึก ชื่อลูกค้าและชื่อร้านเว้นว่างได้<div class="acts"><button type="button" class="btn ghost sm" id="dupUndo">ยกเลิกการอัปเดต</button></div>`;
     $('#dupUndo').onclick = () => { clearForm(); toast('ล้างฟอร์มแล้ว'); };
   };
   $('#dupCancel').onclick = () => { clearForm(); toast('ล้างฟอร์มแล้ว'); };
@@ -567,9 +568,10 @@ function validate(d){
   const bad = [];
   const mark = f => { const el = document.querySelector(`.fld[data-f="${f}"]`); if (el && visible(el)) { el.classList.add('bad'); bad.push(el); } };
   if (!d.salesCode) mark('salesCode');
-  if (!d.custName) mark('custName');
+  const upd = F.mode === 'update'; // อัปเดต Lead เดิม: เว้นชื่อได้ ใช้ชื่อเดิม
+  if (!d.custName && !upd) mark('custName');
   if (!/^0\d{9}$/.test(d.phone)) mark('phone');
-  if (!d.shopName) mark('shopName');
+  if (!d.shopName && !upd) mark('shopName');
   if (!d.shopType) mark('shopType'); else if (d.shopType === 'อื่นๆ' && !d.shopTypeOther) mark('shopTypeOther');
   if (!d.netResult) mark('netResult');
   if (d.netResult === 'ปิดการขายได้' && !/^\d{4}-\d{2}-\d{2}$/.test(d.installDate)) mark('installDate');
