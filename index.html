@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>True × Lotus's — บันทึกการเข้าพบร้านค้า</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --true:#E1251B; --true-ink:#A8170F; --true-wash:#FDECEA;
+  --lotus:#0BB9B2; --lotus-ink:#007F7A; --lotus-wash:#E1F6F5; --lotus-sun:#FDB813;
+  --ok:#1E9E4A; --wait:#E8A600; --no:#D93025; --muted-mk:#8A9199;
+  --bg:#F2F4F3; --panel:#FFFFFF; --ink:#1D2125; --ink2:#59616A; --line:#DDE2E0; --line2:#EDF0EF;
+  --focus:#1A73E8;
+  --font:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--font);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.hidden{display:none!important}
+
+/* ---------- masthead ---------- */
+.mast{position:sticky;top:env(safe-area-inset-top,0px);z-index:1000;background:var(--panel);border-bottom:1px solid var(--line)}
+.mast::before{content:"";display:block;height:4px;background:linear-gradient(90deg,var(--true) 0 50%,var(--lotus) 50% 100%)}
+.mast-in{display:flex;align-items:center;gap:14px;padding:8px 16px;max-width:1480px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:8px;min-width:0}
+.brand img{height:26px;width:auto;display:block}
+.brand .wm{font-weight:700;font-size:17px;letter-spacing:-.01em}
+.brand .wm.t{color:var(--true)} .brand .wm.l{color:var(--lotus)}
+.brand .x{color:var(--ink2);font-size:14px}
+.tabs{display:flex;gap:4px;margin-left:auto;background:var(--bg);padding:3px;border-radius:10px}
+.tabs button{border:0;background:transparent;padding:6px 14px;border-radius:8px;cursor:pointer;color:var(--ink2);font-weight:500;white-space:nowrap}
+.tabs button[aria-selected="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.banner{max-width:1480px;margin:10px auto 0;padding:10px 14px;border-radius:10px;font-size:14px;background:#FFF6DB;border:1px solid #F1D68A;color:#5B4500}
+.banner.err{background:var(--true-wash);border-color:#F3B7B2;color:var(--true-ink)}
+
+/* ---------- form ---------- */
+#formView{max-width:560px;margin:0 auto;padding:14px 12px 120px}
+.fhead{padding:6px 4px 12px}
+.fhead h1{margin:0;font-size:22px;line-height:1.3}
+.fhead p{margin:2px 0 0;color:var(--ink2);font-size:14px}
+.sec{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 14px 16px;margin-bottom:12px;position:relative;overflow:hidden}
+.sec.t{border-left:5px solid var(--true)} .sec.l{border-left:5px solid var(--lotus)}
+.sec h2{margin:0 0 10px;font-size:16px;display:flex;align-items:center;gap:8px}
+.sec h2 .tag{font-size:12px;font-weight:600;padding:1px 8px;border-radius:99px}
+.sec.t h2 .tag{background:var(--true-wash);color:var(--true-ink)} .sec.l h2 .tag{background:var(--lotus-wash);color:var(--lotus-ink)}
+.fld{margin-top:12px}
+.fld:first-of-type{margin-top:0}
+.fld>label,.fld>.lbl{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.req::after{content:" *";color:var(--true)}
+.hint{font-size:13px;color:var(--ink2);margin-top:4px}
+.inp{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px 12px;font-size:16px;min-height:46px}
+.inp:focus{border-color:var(--focus)}
+textarea.inp{min-height:84px;resize:vertical}
+.sub{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px dashed var(--line)}
+.row2{display:flex;gap:8px}.row2>*{flex:1}
+.opt{display:flex;flex-wrap:wrap;gap:8px}
+.opt button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;min-height:44px;cursor:pointer;text-align:left;flex:1 1 auto;display:flex;align-items:center;gap:8px;line-height:1.3}
+.opt button::before{content:"";width:18px;height:18px;flex:none;border:2px solid #B8C0C6;border-radius:50%}
+.opt.multi button::before{border-radius:5px}
+.opt button[aria-pressed="true"]{border-color:var(--ink);background:#F7F9F8;font-weight:600}
+.opt button[aria-pressed="true"]::before{border-color:var(--ink);background:var(--ink);box-shadow:inset 0 0 0 3px #fff}
+.sec.t .opt button[aria-pressed="true"]{border-color:var(--true);background:var(--true-wash)}
+.sec.t .opt button[aria-pressed="true"]::before{border-color:var(--true);background:var(--true)}
+.sec.l .opt button[aria-pressed="true"]{border-color:var(--lotus);background:var(--lotus-wash)}
+.sec.l .opt button[aria-pressed="true"]::before{border-color:var(--lotus);background:var(--lotus)}
+.opt.col button{flex:1 1 100%}
+.fld.bad .inp,.fld.bad .opt button{border-color:var(--true)}
+.fld .errmsg{display:none;color:var(--true-ink);font-size:13px;margin-top:4px}
+.fld.bad .errmsg{display:block}
+.btn{border:0;border-radius:10px;padding:11px 16px;min-height:46px;font-weight:600;cursor:pointer;background:var(--ink);color:#fff}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.true{background:var(--true)} .btn.lotus{background:var(--lotus-ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{min-height:36px;padding:6px 12px;font-size:14px;white-space:nowrap}
+.salesbox{display:flex;gap:8px;align-items:center}
+.salesok{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:10px;background:var(--bg)}
+.salesok b{font-family:var(--mono);font-size:17px}
+.dup{margin-top:10px;border:1px solid #F1D68A;background:#FFF8E1;border-radius:10px;padding:10px 12px;font-size:14px}
+.dup.upd{border-color:#9FD3B3;background:var(--lotus-wash)}
+.dup .acts{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.gps{display:flex;flex-direction:column;gap:8px}
+.gps .btn{width:100%;font-size:16px}
+.gpsres{font-size:14px;padding:10px 12px;border-radius:10px;background:var(--bg)}
+.submitbar{position:fixed;left:0;right:0;bottom:0;z-index:900;background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px))}
+.submitbar .in{max-width:560px;margin:0 auto;display:flex;gap:8px;align-items:center}
+.submitbar .btn{flex:1;font-size:17px;min-height:52px;background:linear-gradient(90deg,var(--true),var(--true-ink))}
+.queue{max-width:560px;margin:0 auto 12px;padding:10px 12px;border-radius:10px;background:#FFF6DB;border:1px solid #F1D68A;font-size:14px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+
+/* modal + toast */
+.modal{position:fixed;inset:0;z-index:2000;background:rgba(20,24,28,.45);display:flex;align-items:flex-end;justify-content:center}
+.modal .box{background:#fff;width:100%;max-width:560px;border-radius:16px 16px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));max-height:85vh;overflow:auto}
+.modal h3{margin:0 0 4px;font-size:18px}
+.modal .opt button{flex:1 1 100%}
+.brdist{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--ink2)}
+@media(min-width:700px){.modal{align-items:center}.modal .box{border-radius:16px}}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:3000;background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;max-width:90vw;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.toast.ok{background:var(--lotus-ink)} .toast.err{background:var(--true-ink)}
+
+/* ---------- dashboard ---------- */
+#dashView{max-width:1480px;margin:0 auto;padding:12px 16px 40px}
+.gate{max-width:420px;margin:60px auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+.gate h2{margin:0 0 6px;font-size:18px}
+.dtop{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:4px 0 10px}
+.dtop h1{margin:0;font-size:22px}
+.dtop .meta{color:var(--ink2);font-size:13px}
+.dtop .acts{display:flex;gap:8px;flex-wrap:wrap}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 53px);z-index:800}
+.filters label{display:flex;flex-direction:column;font-size:12px;color:var(--ink2);gap:3px}
+.filters .inp{min-height:36px;padding:6px 10px;font-size:14px;width:auto;min-width:140px}
+.filters input[type=date].inp{min-width:0}
+.filters .count{margin-left:auto;font-size:13px;color:var(--ink2);align-self:center}
+.decide{margin:12px 0;background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--ink);border-radius:12px;padding:12px 14px}
+.decide h2{margin:0 0 6px;font-size:15px}
+.decide ol{margin:0;padding-left:20px}
+.decide li{margin:2px 0}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.kpi .k{font-size:13px;color:var(--ink2)}
+.kpi .v{font-family:var(--mono);font-size:28px;line-height:1.2;font-variant-numeric:tabular-nums;margin-top:2px}
+.kpi .s{font-size:12px;color:var(--ink2);margin-top:2px}
+.kpi.t{border-top:3px solid var(--true)} .kpi.l{border-top:3px solid var(--lotus)}
+.kpi.ok .v{color:var(--ok)} .kpi.wait .v{color:#9C6F00} .kpi.no .v{color:var(--no)} .kpi.lo .v{color:var(--lotus-ink)}
+.grid{display:grid;gap:12px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.card h2{margin:0 0 8px;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h2 .r{margin-left:auto;display:flex;gap:6px;align-items:center;font-weight:400}
+.span2{grid-column:1/-1}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line2);text-align:left;white-space:nowrap}
+th{font-size:12px;color:var(--ink2);font-weight:600;background:#FAFBFA;position:sticky;top:0}
+th.sort{cursor:pointer;user-select:none}
+th.sort::after{content:" ↕";color:#B8C0C6}
+th.sort.asc::after{content:" ↑";color:var(--ink)} th.sort.desc::after{content:" ↓";color:var(--ink)}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+td.act{white-space:normal;min-width:200px;font-size:13px}
+tr:hover td{background:#F7F9F8}
+.delta.up{color:var(--ok)} .delta.dn{color:var(--no)}
+.seg{display:inline-flex;background:var(--bg);border-radius:8px;padding:2px}
+.seg button{border:0;background:transparent;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--ink2)}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.chartbox{position:relative;height:260px}
+.chartbox.tall{height:300px}
+#map{height:520px;border-radius:10px;border:1px solid var(--line);background:#EEF1F0}
+.maptools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:8px;font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:10px}
+.legend label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.sq{width:12px;height:12px;border-radius:3px;display:inline-block;background:var(--lotus-ink);box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.leaflet-container{font-family:var(--font)!important}
+.leaflet-tooltip.mk{font-size:13px;line-height:1.4;padding:6px 8px}
+.pop b{font-size:14px} .pop div{font-size:13px}
+.brks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.cb-list{max-height:420px;overflow:auto}
+.empty{color:var(--ink2);font-size:14px;padding:18px 4px;text-align:center}
+.pill{display:inline-block;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--bg);white-space:nowrap}
+.pill.ok{background:#E2F4E8;color:#146C33} .pill.wait{background:#FFF1C9;color:#7A5600} .pill.no{background:var(--true-wash);color:var(--true-ink)}
+.pill.now{background:var(--true);color:#fff}
+a.tel{color:var(--true-ink);font-family:var(--mono);text-decoration:none;font-weight:500}
+@media(max-width:1200px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.brks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}.brks{grid-template-columns:minmax(0,1fr)}#map{height:420px}.filters{position:static}}
+@media(max-width:520px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.mast-in{padding:8px 10px;gap:8px}.brand .wm{font-size:15px}.tabs button{padding:6px 10px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.role{margin-left:auto;font-size:13px;color:var(--ink2);white-space:nowrap}
+.mast .acts{margin-left:auto;display:flex;gap:6px;align-items:center}
+.diag{margin:12px 0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.diag h2{margin:0 0 8px;font-size:15px}
+.diag ol{margin:0;padding-left:0;list-style:none}
+.diag li{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--line2);font-size:14px}
+.diag li:last-child{border-bottom:0}
+.diag .st{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff;background:var(--muted-mk)}
+.diag .st.ok{background:var(--ok)} .diag .st.bad{background:var(--no)} .diag .st.skip{background:#C9D0CD}
+.diag .fix{color:var(--ink2);font-size:13px}
+.inst-date{min-height:32px;padding:3px 6px;font-size:13px;border:1px solid var(--line);border-radius:8px}
+.pill.late{background:var(--no);color:#fff} .pill.today{background:var(--wait);color:#3D2C00} .pill.done{background:#E2F4E8;color:#146C33}
+.libmsg{color:var(--ink2);font-size:14px;padding:30px 10px;text-align:center}
+.pill.lo{background:var(--lotus-wash);color:var(--lotus-ink)}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="mast-in">
+    <div class="brand" aria-label="True × Lotus's">
+      <img src="logo-true.png" alt="True" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'wm t',textContent:'True'}))">
+      <span class="x">×</span>
+      <img src="logo-lotus.png" alt="Lotus's" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'wm l',textContent:'Lotus\u2019s'}))">
+    </div>
+    <span class="role">สำหรับเซลล์</span>
+  </div>
+</header>
+<div id="connBanner" class="banner hidden"></div>
+
+<main id="formView">
+  <div class="fhead">
+    <h1>บันทึกการเข้าพบร้านค้า</h1>
+    <p>เสนอเน็ตบ้านทรูและสินค้าโลตัสในการเข้าพบครั้งเดียว</p>
+  </div>
+  <div id="queueBox" class="queue hidden"></div>
+
+  <section class="sec" id="secSales">
+    <h2>รหัสเซลล์</h2>
+    <div class="fld" data-f="salesCode">
+      <div id="salesEdit">
+        <label for="salesCode" class="req">รหัสเซลล์ (Sales Code)</label>
+        <div class="salesbox">
+          <input id="salesCode" class="inp" autocomplete="off" autocapitalize="characters" placeholder="เช่น SP001">
+          <button class="btn sm" id="salesConfirm" type="button">ยืนยันรหัส</button>
+        </div>
+      </div>
+      <div id="salesShow" class="salesok hidden">
+        <div>เซลล์ <b id="salesShowCode"></b> <span id="salesShowName" class="hint"></span></div>
+        <button class="btn ghost sm" id="salesChange" type="button">เปลี่ยนรหัส</button>
+      </div>
+      <div class="errmsg">ยืนยันรหัสเซลล์ก่อนส่ง</div>
+    </div>
+  </section>
+
+  <section class="sec" id="secCust">
+    <h2>ข้อมูลลูกค้า</h2>
+    <div class="fld" data-f="custName"><label for="custName" class="req">ชื่อลูกค้า</label><input id="custName" class="inp" autocomplete="off"><div class="errmsg">กรอกชื่อลูกค้า</div></div>
+    <div class="fld" data-f="phone"><label for="phone" class="req">เบอร์โทร</label>
+      <input id="phone" class="inp num" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="0XXXXXXXXX">
+      <div class="errmsg">เบอร์โทรต้องเป็นตัวเลข 10 หลัก ขึ้นต้นด้วย 0</div>
+      <div id="dupBox" class="dup hidden"></div>
+    </div>
+    <div class="fld" data-f="shopName"><label for="shopName" class="req">ชื่อร้านค้า</label><input id="shopName" class="inp" autocomplete="off"><div class="errmsg">กรอกชื่อร้านค้า</div></div>
+    <div class="fld" data-f="shopType"><label for="shopType" class="req">ประเภทร้านค้า</label>
+      <select id="shopType" class="inp"></select>
+      <div class="sub hidden" id="wShopOther"><div class="fld" data-f="shopTypeOther"><label for="shopTypeOther" class="req">ระบุประเภทร้าน</label><input id="shopTypeOther" class="inp"><div class="errmsg">ระบุประเภทร้าน</div></div></div>
+      <div class="errmsg">เลือกประเภทร้านค้า</div>
+    </div>
+  </section>
+
+  <section class="sec l">
+    <h2>สินค้าโลตัสที่สนใจ <span class="tag">เลือกได้หลายข้อ</span></h2>
+    <div class="fld" data-f="lotusInterest"><div class="opt multi" data-multi="lotusInterest"></div></div>
+  </section>
+
+  <section class="sec t">
+    <h2>อินเทอร์เน็ตบ้านทรู <span class="tag">ทรูออนไลน์</span></h2>
+    <div class="fld" data-f="netResult"><div class="lbl req">ผลการเสนอ</div><div class="opt col" data-one="netResult"></div><div class="errmsg">เลือกผลการเสนอเน็ตทรู</div></div>
+    <div class="sub hidden" id="wInstall">
+      <div class="fld" data-f="installDate"><label for="installDate" class="req">วันนัดเข้าติดตั้ง</label><input id="installDate" type="date" class="inp"><div class="hint">ใช้ติดตามสถานะการติดตั้งบนแดชบอร์ด</div><div class="errmsg">ระบุวันนัดเข้าติดตั้ง</div></div>
+    </div>
+    <div class="sub hidden" id="wNetCallback">
+      <div class="fld" data-f="callbackTime"><div class="lbl req">เวลาที่สะดวกให้โทรกลับ (เน็ตทรู)</div><div class="opt" data-one="callbackTime"></div><div class="errmsg">เลือกเวลาที่สะดวก</div></div>
+    </div>
+    <div class="sub hidden" id="wNetReason">
+      <div class="fld" data-f="netReason"><div class="lbl req">เหตุผลที่ปิดการขายไม่ได้</div><div class="opt" data-one="netReason"></div><div class="errmsg">เลือกเหตุผล</div></div>
+      <div class="hidden" id="wNetOther">
+        <div class="fld" data-f="netProvider"><div class="lbl req">ใช้ค่ายไหนอยู่</div><div class="opt" data-one="netProvider"></div>
+          <div class="hidden fld" id="wProvOther" data-f="netProviderOther"><input id="netProviderOther" class="inp" placeholder="ระบุค่าย"><div class="errmsg">ระบุชื่อค่าย</div></div>
+          <div class="errmsg">เลือกค่ายที่ใช้อยู่</div></div>
+        <div class="fld" data-f="netWhy"><div class="lbl req">ทำไมถึงไม่ย้ายมาทรู (เลือกได้หลายข้อ)</div><div class="opt multi col" data-multi="netWhy"></div><div class="errmsg">เลือกอย่างน้อย 1 ข้อ</div></div>
+        <div class="fld hidden" id="wContract" data-f="contractEnd"><label for="contractEnd" class="req">สัญญาหมดเมื่อ</label><input id="contractEnd" type="month" class="inp"><div class="errmsg">ระบุเดือนที่สัญญาหมด</div></div>
+        <div class="fld hidden" id="wWhyOther" data-f="netWhyOther"><label for="netWhyOther" class="req">ระบุเหตุผลอื่น</label><input id="netWhyOther" class="inp"><div class="errmsg">ระบุเหตุผล</div></div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="sec l">
+    <h2>สินค้าโลตัส</h2>
+    <div class="fld" data-f="lotusResult"><div class="lbl req">ผลการเสนอ</div><div class="opt col" data-one="lotusResult"></div><div class="errmsg">เลือกผลการเสนอสินค้าโลตัส</div></div>
+    <div class="sub hidden" id="wLotusCallback">
+      <div class="fld" data-f="lotusCallbackTime"><div class="lbl req">เวลาที่สะดวกให้โทรกลับ (โลตัส)</div><div class="opt" data-one="lotusCallbackTime"></div><div class="errmsg">เลือกเวลาที่สะดวก</div></div>
+    </div>
+    <div class="sub hidden" id="wLotusWhy">
+      <div class="fld" data-f="lotusWhy"><div class="lbl req">เหตุผลที่ปิดการขายไม่ได้ (เลือกได้หลายข้อ)</div><div class="opt multi col" data-multi="lotusWhy"></div><div class="errmsg">เลือกอย่างน้อย 1 ข้อ</div></div>
+      <div class="fld" data-f="channels"><div class="lbl">ปกติสั่งสินค้าจากช่องทางไหน (เลือกได้หลายข้อ)</div><div class="opt multi" data-multi="channels"></div>
+        <div class="fld hidden" id="wChanApp" data-f="channelApp"><input id="channelApp" class="inp" placeholder="ระบุแอปฯ ออนไลน์"><div class="errmsg">ระบุชื่อแอปฯ</div></div>
+        <div class="fld hidden" id="wChanOther" data-f="channelOther"><input id="channelOther" class="inp" placeholder="ระบุช่องทางอื่น"><div class="errmsg">ระบุช่องทาง</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>พื้นที่และพิกัด</h2>
+    <div class="fld" data-f="district"><label for="district" class="req">อำเภอ</label><select id="district" class="inp"></select>
+      <div class="fld hidden" id="wDistOther" data-f="districtOther"><input id="districtOther" class="inp" placeholder="ระบุอำเภอ"><div class="errmsg">ระบุอำเภอ</div></div>
+      <div class="errmsg">เลือกอำเภอ</div></div>
+    <div class="fld gps">
+      <button class="btn lotus" id="gpsBtn" type="button">📍 ปักหมุดตำแหน่งร้าน</button>
+      <div class="hint">ยืนหน้าร้านแล้วกดปุ่ม ระบบจะบันทึกพิกัดและหาสาขา Lotus's ที่ใกล้ที่สุด</div>
+      <div id="gpsRes" class="gpsres hidden"></div>
+    </div>
+    <div class="fld"><label for="note">บันทึกเพิ่มเติม (ไม่บังคับ)</label><textarea id="note" class="inp"></textarea></div>
+  </section>
+</main>
+
+<div class="submitbar" id="submitBar"><div class="in"><button class="btn" id="submitBtn" type="button">บันทึกการเข้าพบ</button></div></div>
+
+<script>
+
+/* =====================================================================
+   ตั้งค่า: วาง URL ของ Apps Script Web App (ลงท้ายด้วย /exec) ไว้ตรงนี้
+   ===================================================================== */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwPF-ud8D4AwX_4EjiXrdveVEwO0GG6A2B2lbTjnLcf71F5TDz0jCMqn44m75D6WxGUoA/exec';
+
+const OPT = {
+  shopType: ['ร้านโชห่วย','ร้านอาหาร','ร้านกาแฟ-เครื่องดื่ม','ร้านค้าส่ง','โรงแรม-ที่พัก','อื่นๆ'],
+  lotusInterest: ['อาหารสด','อาหารแห้ง','แช่แข็ง','เครื่องดื่ม','ของใช้ภายในบ้าน'],
+  netResult: ['ปิดการขายได้','รอตัดสินใจ','ไม่สนใจ'],
+  netReason: ['ใช้ทรูอยู่แล้ว','ใช้ค่ายอื่นอยู่'],
+  netProvider: ['AIS','NT','อื่นๆ'],
+  netWhy: ['ติดสัญญาอยู่','ราคาไม่ดึงดูดใจ','ไม่มีอำนาจตัดสินใจ','อื่นๆ'],
+  callbackTime: ['เช้า','บ่าย','ทันที'],
+  lotusCallbackTime: ['เช้า','บ่าย','ทันที'],
+  lotusResult: ['สั่งซื้อแล้ว','สนใจรอติดตาม','ไม่สนใจ'],
+  lotusWhy: ['ราคาสูงกว่าช่องทางอื่น','ไม่มีสินค้าที่ต้องการ','รอบเวลาการจัดส่งไม่ยืดหยุ่นพอ','แอปฯ ใช้งานยาก','ไม่มีพนักงานดูแลใกล้ชิด'],
+  channels: ['แม็คโคร','บิ๊กซี','ซีเจ','ท็อปส์','ตลาดสด','ยี่ปั๊ว','รถเร่','แอปฯ ออนไลน์','อื่นๆ'],
+  district: ['เมืองสมุทรปราการ','บางพลี','บางบ่อ','บางเสาธง','พระประแดง','พระสมุทรเจดีย์','อื่นๆ']
+};
+const DIST6 = OPT.district.slice(0,6);
+const LABELS = {
+  id:'รหัส Lead', createdAt:'บันทึกครั้งแรก', updatedAt:'อัปเดตล่าสุด', visitCount:'จำนวนครั้งที่เข้าพบ', salesCode:'รหัสเซลล์ (ล่าสุด)', firstSalesCode:'รหัสเซลล์ (ครั้งแรก)',
+  custName:'ชื่อลูกค้า', phone:'เบอร์โทร', shopName:'ชื่อร้านค้า', shopType:'ประเภทร้านค้า', shopTypeOther:'ประเภทร้าน (อื่นๆ)', lotusInterest:'สินค้าโลตัสที่สนใจ',
+  netResult:'ผลเสนอเน็ตทรู', netReason:'เหตุผลไม่สนใจเน็ตทรู', netProvider:'ค่ายที่ใช้อยู่', netProviderOther:'ค่ายที่ใช้อยู่ (อื่นๆ)', netWhy:'ทำไมไม่ย้ายมาทรู', contractEnd:'สัญญาหมดเมื่อ', netWhyOther:'เหตุผลไม่ย้าย (อื่นๆ)',
+  netClosedAt:'วันที่ปิดเน็ตทรูได้', installDate:'วันนัดติดตั้งเน็ตทรู', installStatus:'สถานะติดตั้ง', installedAt:'วันที่ยืนยันติดตั้ง', callbackTime:'เวลาโทรกลับ (เน็ตทรู)', lotusResult:'ผลเสนอสินค้าโลตัส', lotusCallbackTime:'เวลาโทรกลับ (โลตัส)', lotusWhy:'เหตุผลไม่สนใจโลตัส', lotusOrderedAt:'วันที่สั่งโลตัส',
+  channels:'ช่องทางสั่งซื้อเดิม', channelApp:'แอปฯ ออนไลน์ที่ใช้', channelOther:'ช่องทางอื่นๆ', district:'อำเภอ', districtOther:'อำเภอ (อื่นๆ)',
+  lat:'ละติจูด', lng:'ลองจิจูด', gpsAccuracy:'ความแม่นยำ GPS (ม.)', nearestBranch:"สาขา Lotus's ใกล้สุด", nearestBranchDist:'ระยะถึงสาขา (กม.)', note:'บันทึกเพิ่มเติม'
+};
+const LS = { sales:'txl_sales', salesName:'txl_sales_name', key:'txl_key', queue:'txl_queue', api:'txl_api' };
+
+/* ---------- utilities ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const lsGet = (k, d=null) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch(e){ return d; } };
+const lsSet = (k, v) => { try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch(e){} };
+const pct = (a,b) => b ? a/b*100 : null;
+const fmtPct = v => v === null ? '–' : v.toFixed(1) + '%';
+const fmtN = v => (v ?? 0).toLocaleString('th-TH');
+const maskPhone = p => p && p.length === 10 ? p.slice(0,3) + '-XXX-' + p.slice(6) : (p || '');
+const pad = n => String(n).padStart(2,'0');
+const dKey = d => d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+const thDate = iso => { if(!iso) return ''; const d = new Date(iso); if (isNaN(d)) return iso; return d.toLocaleString('th-TH',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'}); };
+function show(id, on){ document.querySelector(id).classList.toggle('hidden', !on); }
+function toast(msg, cls='') { const t = document.createElement('div'); t.className = 'toast ' + cls; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3500); }
+function haversine(a,b,c,d){ const R=6371, r=x=>x*Math.PI/180; const dl=r(c-a), dg=r(d-b); const h=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dg/2)**2; return 2*R*Math.asin(Math.sqrt(h)); }
+function loadScript(src){ return new Promise((res,rej)=>{ if (document.querySelector('script[src="'+src+'"]')) return res(); const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new Error('load '+src)); document.head.appendChild(s); }); }
+function loadCss(href){ if (document.querySelector('link[href="'+href+'"]')) return; const l=document.createElement('link'); l.rel='stylesheet'; l.href=href; document.head.appendChild(l); }
+
+/* ---------- API ---------- */
+const qp = new URLSearchParams(location.search);
+if (qp.get('api')) lsSet(LS.api, qp.get('api'));
+const API = (SCRIPT_URL || lsGet(LS.api, '') || '').trim();
+
+async function apiGet(params){
+  if (!API) throw new Error('no_api');
+  const u = API + (API.includes('?') ? '&' : '?') + new URLSearchParams(params).toString();
+  const r = await fetch(u, { method:'GET', redirect:'follow' });
+  if (!r.ok) throw new Error('http ' + r.status);
+  return r.json();
+}
+async function apiPost(body){
+  if (!API) throw new Error('no_api');
+  const r = await fetch(API, { method:'POST', redirect:'follow', body: JSON.stringify(body) }); // text/plain = ไม่มี preflight
+  if (!r.ok) throw new Error('http ' + r.status);
+  return r.json();
+}
+
+let CFG = { branches: [], hasSalesList: false, loaded: false };
+async function loadConfig(){
+  try { const c = await apiGet({action:'config'}); if (c.ok) CFG = { branches: c.branches || [], hasSalesList: !!c.hasSalesList, loaded: true }; }
+  catch(e){ /* ใช้งานต่อได้ ถ้าเน็ตหลุดจะเก็บคิวไว้ */ }
+}
+
+function showConnBanner(){
+  const b = $('#connBanner');
+  if (!API) { b.classList.remove('hidden'); b.classList.add('err'); b.textContent = 'ยังไม่ได้เชื่อมต่อ Google Sheet — ผู้ดูแลต้องใส่ URL ของ Apps Script ในตัวแปร SCRIPT_URL ก่อนใช้งาน (ตอนนี้ข้อมูลที่กรอกจะถูกเก็บไว้ในเครื่องนี้ชั่วคราว)'; }
+  else b.classList.add('hidden');
+}
+
+/* =====================================================================
+   FORM (หน้าเซลล์)
+   ===================================================================== */
+const F = { mode: 'new', dupLead: null, lat: null, lng: null, acc: null, branch: '', branchDist: null };
+const one = {};   // single-select values
+const multi = {}; // Set per multi field
+
+function buildOptions(){
+  $$('[data-one]').forEach(box => { const k = box.dataset.one; one[k] = '';
+    box.innerHTML = OPT[k].map(v => `<button type="button" aria-pressed="false" data-v="${esc(v)}">${esc(v)}</button>`).join(''); });
+  $$('[data-multi]').forEach(box => { const k = box.dataset.multi; multi[k] = new Set();
+    box.innerHTML = OPT[k].map(v => `<button type="button" aria-pressed="false" data-v="${esc(v)}">${esc(v)}</button>`).join(''); });
+  $('#shopType').innerHTML = '<option value="">เลือกประเภทร้านค้า</option>' + OPT.shopType.map(v=>`<option>${esc(v)}</option>`).join('');
+  $('#district').innerHTML = '<option value="">เลือกอำเภอ</option>' + OPT.district.map(v=>`<option>${esc(v)}</option>`).join('');
+
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-one] button, [data-multi] button'); if (!b) return;
+    const box = b.parentElement;
+    if (box.dataset.one) { const k = box.dataset.one; one[k] = one[k] === b.dataset.v ? '' : b.dataset.v; }
+    else { const s = multi[box.dataset.multi]; s.has(b.dataset.v) ? s.delete(b.dataset.v) : s.add(b.dataset.v); }
+    syncButtons(); updateVisibility(); clearBad(box.closest('.fld'));
+  });
+  $('#shopType').addEventListener('change', () => { updateVisibility(); clearBad($('#shopType').closest('.fld')); });
+  $('#district').addEventListener('change', () => { updateVisibility(); clearBad($('#district').closest('.fld')); });
+  $$('#formView input, #formView textarea').forEach(i => i.addEventListener('input', () => clearBad(i.closest('.fld'))));
+}
+function syncButtons(){
+  $$('[data-one]').forEach(box => box.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', one[box.dataset.one] === b.dataset.v)));
+  $$('[data-multi]').forEach(box => box.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', multi[box.dataset.multi].has(b.dataset.v))));
+}
+function updateVisibility(){
+  show('#wShopOther', $('#shopType').value === 'อื่นๆ');
+  show('#wInstall', one.netResult === 'ปิดการขายได้');
+  const netWait = one.netResult === 'รอตัดสินใจ';
+  show('#wNetCallback', netWait);
+  if (!netWait) one.callbackTime = '';
+  const netNo = one.netResult === 'ไม่สนใจ';
+  show('#wNetReason', netNo);
+  if (!netNo) one.netReason = '';
+  const other = netNo && one.netReason === 'ใช้ค่ายอื่นอยู่';
+  show('#wNetOther', other);
+  if (!other) { one.netProvider = ''; multi.netWhy.clear(); }
+  show('#wProvOther', other && one.netProvider === 'อื่นๆ');
+  show('#wContract', other && multi.netWhy.has('ติดสัญญาอยู่'));
+  show('#wWhyOther', other && multi.netWhy.has('อื่นๆ'));
+  const lotusWait = one.lotusResult === 'สนใจรอติดตาม';
+  show('#wLotusCallback', lotusWait);
+  if (!lotusWait) one.lotusCallbackTime = '';
+  const lotusNo = one.lotusResult === 'ไม่สนใจ';
+  show('#wLotusWhy', lotusNo);
+  if (!lotusNo) { multi.lotusWhy.clear(); multi.channels.clear(); }
+  show('#wChanApp', lotusNo && multi.channels.has('แอปฯ ออนไลน์'));
+  show('#wChanOther', lotusNo && multi.channels.has('อื่นๆ'));
+  show('#wDistOther', $('#district').value === 'อื่นๆ');
+  syncButtons();
+}
+const visible = el => el && !el.closest('.hidden');
+function clearBad(fld){ if (fld) fld.classList.remove('bad'); }
+
+/* sales code */
+function renderSales(){
+  const code = lsGet(LS.sales, '');
+  show('#salesEdit', !code); show('#salesShow', !!code);
+  $('#salesShowCode').textContent = code; $('#salesShowName').textContent = lsGet(LS.salesName, '');
+}
+$('#salesConfirm').addEventListener('click', async () => {
+  const code = $('#salesCode').value.trim().toUpperCase();
+  if (!code) { $('#salesCode').closest('.fld').classList.add('bad'); return; }
+  const btn = $('#salesConfirm'); btn.disabled = true;
+  let name = '';
+  try {
+    const r = await apiGet({action:'checkSales', code});
+    if (r.ok && !r.valid) { toast('ไม่พบรหัส ' + code + ' ในรายชื่อเซลล์', 'err'); btn.disabled = false; return; }
+    name = r.name || '';
+  } catch(e) { /* ออฟไลน์: ยอมรับไว้ก่อน ระบบหลังบ้านจะตรวจอีกครั้งตอนส่ง */ }
+  lsSet(LS.sales, code); lsSet(LS.salesName, name); btn.disabled = false; renderSales(); clearBad($('#secSales .fld'));
+});
+$('#salesChange').addEventListener('click', () => { $('#salesCode').value = lsGet(LS.sales, ''); lsSet(LS.sales, null); lsSet(LS.salesName, null); renderSales(); $('#salesCode').focus(); });
+
+/* phone + duplicate */
+let phoneTimer = null, phoneReq = 0;
+$('#phone').addEventListener('input', e => {
+  const v = e.target.value.replace(/\D/g,'').slice(0,10);
+  if (e.target.value !== v) e.target.value = v;
+  if (F.mode === 'update' && F.dupLead && F.dupLead.phone !== v) resetDup();
+  clearTimeout(phoneTimer);
+  if (/^0\d{9}$/.test(v)) phoneTimer = setTimeout(() => checkDup(v), 350);
+  else if (F.mode !== 'update') resetDup();
+});
+async function checkDup(p){
+  const my = ++phoneReq;
+  try {
+    const r = await apiGet({action:'check', phone:p});
+    if (my !== phoneReq || $('#phone').value !== p) return;
+    if (r.ok && r.found) showDup(Object.assign({phone:p}, r.lead)); else if (F.mode !== 'update') resetDup();
+  } catch(e) { /* ออฟไลน์: หลังบ้านจะตรวจซ้ำตอนส่ง */ }
+}
+function hideDup(){ F.dupLead = null; $('#dupBox').classList.add('hidden'); }
+function resetDup(){ F.mode = 'new'; hideDup(); }
+function showDup(lead){
+  F.dupLead = lead; F.mode = 'pending';
+  const b = $('#dupBox'); b.className = 'dup';
+  b.innerHTML = `<b>เบอร์นี้เคยบันทึกแล้ว</b><div>ร้าน ${esc(lead.shopName)} (${esc(lead.custName)}) · ${esc(lead.district || '')}<br>บันทึกโดย ${esc(lead.salesCode)} เมื่อ ${esc(thDate(lead.updatedAt || lead.createdAt))} · เข้าพบแล้ว ${esc(lead.visitCount || 1)} ครั้ง<br>ผลล่าสุด: เน็ตทรู ${esc(lead.netResult)} / โลตัส ${esc(lead.lotusResult)}</div>
+  <div class="acts"><button type="button" class="btn lotus sm" id="dupUpd">อัปเดต Lead เดิม</button><button type="button" class="btn ghost sm" id="dupCancel">ยกเลิกและล้างฟอร์ม</button></div>`;
+  $('#dupUpd').onclick = () => {
+    F.mode = 'update';
+    if (!$('#custName').value) $('#custName').value = lead.custName || '';
+    if (!$('#shopName').value) $('#shopName').value = lead.shopName || '';
+    if (!$('#shopType').value && OPT.shopType.includes(lead.shopType)) $('#shopType').value = lead.shopType;
+    if (!$('#district').value && OPT.district.includes(lead.district)) $('#district').value = lead.district;
+    if (!$('#installDate').value && lead.installDate) $('#installDate').value = lead.installDate;
+    updateVisibility();
+    b.className = 'dup upd';
+    b.innerHTML = `<b>กำลังอัปเดต Lead เดิม</b> — ร้าน ${esc(lead.shopName)} (เข้าพบครั้งที่ ${(Number(lead.visitCount)||1)+1}) กรอกผลการเข้าพบครั้งนี้แล้วกดบันทึก<div class="acts"><button type="button" class="btn ghost sm" id="dupUndo">ยกเลิกการอัปเดต</button></div>`;
+    $('#dupUndo').onclick = () => { clearForm(); toast('ล้างฟอร์มแล้ว'); };
+  };
+  $('#dupCancel').onclick = () => { clearForm(); toast('ล้างฟอร์มแล้ว'); };
+  b.classList.remove('hidden');
+}
+
+/* GPS + nearest branch */
+$('#gpsBtn').addEventListener('click', () => {
+  if (!navigator.geolocation) { toast('เครื่องนี้ไม่รองรับการระบุตำแหน่ง', 'err'); return; }
+  const btn = $('#gpsBtn'); btn.disabled = true; btn.textContent = 'กำลังหาตำแหน่ง…';
+  navigator.geolocation.getCurrentPosition(pos => {
+    btn.disabled = false; btn.textContent = '📍 ปักหมุดใหม่';
+    F.lat = +pos.coords.latitude.toFixed(6); F.lng = +pos.coords.longitude.toFixed(6); F.acc = Math.round(pos.coords.accuracy);
+    F.branch = ''; F.branchDist = null;
+    if (CFG.branches.length) openBranchPicker(); else renderGps();
+  }, err => {
+    btn.disabled = false; btn.textContent = '📍 ปักหมุดตำแหน่งร้าน';
+    const m = err.code === 1 ? 'ไม่ได้อนุญาตให้เข้าถึงตำแหน่ง — เปิดสิทธิ์ตำแหน่งให้เบราว์เซอร์แล้วกดใหม่' : err.code === 3 ? 'หาตำแหน่งไม่ทันเวลา — ออกไปที่โล่งแล้วกดใหม่' : 'หาตำแหน่งไม่ได้ — ลองกดใหม่อีกครั้ง';
+    toast(m, 'err');
+  }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
+});
+function renderGps(){
+  const r = $('#gpsRes');
+  if (F.lat === null) { r.classList.add('hidden'); return; }
+  r.classList.remove('hidden');
+  const br = F.branch ? `<div>สาขา Lotus's ใกล้สุด: <b>${esc(F.branch)}</b> <span class="num">(${F.branchDist.toFixed(2)} กม.)</span></div>`
+    : (CFG.branches.length ? '' : `<div class="hint">ยังไม่มีรายชื่อสาขา Lotus's ในระบบ — บันทึกเฉพาะพิกัด</div>`);
+  r.innerHTML = `<div>พิกัด <span class="num">${F.lat}, ${F.lng}</span> <span class="hint">(คลาดเคลื่อน ~${F.acc} ม.)</span></div>${br}`;
+}
+function openBranchPicker(){
+  const list = CFG.branches.map(b => ({...b, d: haversine(F.lat, F.lng, b.lat, b.lng)})).sort((a,b)=>a.d-b.d).slice(0,5);
+  let pick = 0;
+  const m = document.createElement('div'); m.className = 'modal';
+  m.innerHTML = `<div class="box" role="dialog" aria-modal="true" aria-labelledby="brT"><h3 id="brT">เลือกสาขา Lotus's</h3><p class="hint" style="margin:0 0 10px">ระบบจับพิกัดแล้ว เลือกสาขาที่ถูกต้องจาก ${list.length} สาขาที่ใกล้ที่สุด</p>
+    <div class="opt col">${list.map((b,i)=>`<button type="button" data-i="${i}" aria-pressed="${i===0}">${esc(b.name)}<span class="brdist">${b.d.toFixed(2)} กม.</span></button>`).join('')}</div>
+    <div class="row2" style="margin-top:12px"><button type="button" class="btn ghost" data-x>ข้าม</button><button type="button" class="btn lotus" data-ok>ยืนยันสาขานี้</button></div></div>`;
+  document.body.appendChild(m);
+  m.addEventListener('click', e => {
+    const b = e.target.closest('[data-i]');
+    if (b) { pick = +b.dataset.i; m.querySelectorAll('[data-i]').forEach(x=>x.setAttribute('aria-pressed', x===b)); return; }
+    if (e.target.closest('[data-ok]')) { F.branch = list[pick].name; F.branchDist = +list[pick].d.toFixed(3); m.remove(); renderGps(); }
+    else if (e.target.closest('[data-x]') || e.target === m) { m.remove(); renderGps(); }
+  });
+}
+
+/* collect + validate */
+function collect(){
+  return {
+    salesCode: lsGet(LS.sales, ''),
+    custName: $('#custName').value.trim(), phone: $('#phone').value.trim(), shopName: $('#shopName').value.trim(),
+    shopType: $('#shopType').value, shopTypeOther: visible($('#wShopOther')) ? $('#shopTypeOther').value.trim() : '',
+    lotusInterest: [...multi.lotusInterest],
+    netResult: one.netResult, installDate: visible($('#wInstall')) ? $('#installDate').value : '',
+    netReason: one.netReason, netProvider: one.netProvider,
+    netProviderOther: visible($('#wProvOther')) ? $('#netProviderOther').value.trim() : '',
+    netWhy: [...multi.netWhy], contractEnd: visible($('#wContract')) ? $('#contractEnd').value : '',
+    netWhyOther: visible($('#wWhyOther')) ? $('#netWhyOther').value.trim() : '',
+    callbackTime: one.callbackTime, lotusResult: one.lotusResult, lotusCallbackTime: one.lotusCallbackTime, lotusWhy: [...multi.lotusWhy],
+    channels: [...multi.channels], channelApp: visible($('#wChanApp')) ? $('#channelApp').value.trim() : '',
+    channelOther: visible($('#wChanOther')) ? $('#channelOther').value.trim() : '',
+    district: $('#district').value, districtOther: visible($('#wDistOther')) ? $('#districtOther').value.trim() : '',
+    lat: F.lat ?? '', lng: F.lng ?? '', gpsAccuracy: F.acc ?? '', nearestBranch: F.branch, nearestBranchDist: F.branchDist ?? '',
+    note: $('#note').value.trim(), clientTime: new Date().toISOString()
+  };
+}
+function validate(d){
+  const bad = [];
+  const mark = f => { const el = document.querySelector(`.fld[data-f="${f}"]`); if (el && visible(el)) { el.classList.add('bad'); bad.push(el); } };
+  if (!d.salesCode) mark('salesCode');
+  if (!d.custName) mark('custName');
+  if (!/^0\d{9}$/.test(d.phone)) mark('phone');
+  if (!d.shopName) mark('shopName');
+  if (!d.shopType) mark('shopType'); else if (d.shopType === 'อื่นๆ' && !d.shopTypeOther) mark('shopTypeOther');
+  if (!d.netResult) mark('netResult');
+  if (d.netResult === 'ปิดการขายได้' && !/^\d{4}-\d{2}-\d{2}$/.test(d.installDate)) mark('installDate');
+  if (d.netResult === 'รอตัดสินใจ' && !d.callbackTime) mark('callbackTime');
+  if (d.netResult === 'ไม่สนใจ') {
+    if (!d.netReason) mark('netReason');
+    if (d.netReason === 'ใช้ค่ายอื่นอยู่') {
+      if (!d.netProvider) mark('netProvider'); else if (d.netProvider === 'อื่นๆ' && !d.netProviderOther) mark('netProviderOther');
+      if (!d.netWhy.length) mark('netWhy');
+      if (d.netWhy.includes('ติดสัญญาอยู่') && !d.contractEnd) mark('contractEnd');
+      if (d.netWhy.includes('อื่นๆ') && !d.netWhyOther) mark('netWhyOther');
+    }
+  }
+  if (!d.lotusResult) mark('lotusResult');
+  if (d.lotusResult === 'สนใจรอติดตาม' && !d.lotusCallbackTime) mark('lotusCallbackTime');
+  if (d.lotusResult === 'ไม่สนใจ' && !d.lotusWhy.length) mark('lotusWhy');
+  if (d.channels.includes('แอปฯ ออนไลน์') && !d.channelApp) mark('channelApp');
+  if (d.channels.includes('อื่นๆ') && !d.channelOther) mark('channelOther');
+  if (!d.district) mark('district'); else if (d.district === 'อื่นๆ' && !d.districtOther) mark('districtOther');
+  return bad;
+}
+
+$('#submitBtn').addEventListener('click', async () => {
+  $$('.fld.bad').forEach(clearBad);
+  const d = collect();
+  const bad = validate(d);
+  if (bad.length) { bad[0].scrollIntoView({behavior:'smooth', block:'center'}); toast('ยังกรอกไม่ครบ ' + bad.length + ' จุด', 'err'); return; }
+  if (F.mode === 'pending') { $('#dupBox').scrollIntoView({behavior:'smooth', block:'center'}); toast('เบอร์นี้เคยบันทึกแล้ว — เลือก "อัปเดต Lead เดิม" หรือยกเลิก', 'err'); return; }
+  if (d.lat === '' && !confirm('ยังไม่ได้ปักหมุดตำแหน่งร้าน ร้านนี้จะไม่แสดงบนแผนที่ ต้องการบันทึกต่อหรือไม่?')) { $('#gpsBtn').scrollIntoView({behavior:'smooth', block:'center'}); return; }
+  const mode = F.mode === 'update' ? 'update' : 'new';
+  const btn = $('#submitBtn'); btn.disabled = true; btn.textContent = 'กำลังบันทึก…';
+  try {
+    const r = await apiPost({ action:'submit', mode, lead:d });
+    if (r.ok) { toast(r.updated ? `อัปเดต Lead เดิมแล้ว (เข้าพบครั้งที่ ${r.visitCount})` : 'บันทึกการเข้าพบแล้ว', 'ok'); clearForm(); window.scrollTo({top:0, behavior:'smooth'}); }
+    else if (r.duplicate) { showDup(Object.assign({phone:d.phone}, r.lead)); $('#dupBox').scrollIntoView({behavior:'smooth', block:'center'}); }
+    else if (r.error === 'bad_sales') { toast(r.message, 'err'); lsSet(LS.sales, null); renderSales(); }
+    else toast(r.message || 'บันทึกไม่สำเร็จ', 'err');
+  } catch(e) {
+    enqueue({ mode, lead:d }); clearForm(); toast('ส่งไม่ได้ตอนนี้ — เก็บไว้ในเครื่อง จะส่งให้อัตโนมัติเมื่อมีสัญญาณ', 'err');
+  } finally { btn.disabled = false; btn.textContent = 'บันทึกการเข้าพบ'; }
+});
+
+function clearForm(){
+  ['custName','phone','shopName','shopTypeOther','installDate','netProviderOther','contractEnd','netWhyOther','channelApp','channelOther','districtOther','note'].forEach(id => $('#'+id).value = '');
+  $('#shopType').value = ''; $('#district').value = '';
+  Object.keys(one).forEach(k => one[k] = ''); Object.values(multi).forEach(s => s.clear());
+  Object.assign(F, { mode:'new', dupLead:null, lat:null, lng:null, acc:null, branch:'', branchDist:null });
+  $('#gpsBtn').textContent = '📍 ปักหมุดตำแหน่งร้าน';
+  hideDup(); renderGps(); $$('.fld.bad').forEach(clearBad); updateVisibility();
+}
+function loadIntoForm(d){
+  clearForm();
+  ['custName','phone','shopName','shopTypeOther','installDate','netProviderOther','contractEnd','netWhyOther','channelApp','channelOther','districtOther','note'].forEach(id => $('#'+id).value = d[id] || '');
+  $('#shopType').value = d.shopType || ''; $('#district').value = d.district || '';
+  ['netResult','netReason','netProvider','callbackTime','lotusResult','lotusCallbackTime'].forEach(k => one[k] = d[k] || '');
+  ['lotusInterest','lotusWhy','channels'].forEach(k => multi[k] = new Set(d[k] || []));
+  updateVisibility(); // เปิดส่วนที่ซ่อนก่อน แล้วค่อยใส่ค่าที่ขึ้นกับส่วนนั้น
+  multi.netWhy = new Set(d.netWhy || []); updateVisibility();
+  if (d.lat !== '' && d.lat !== null) Object.assign(F, { lat:d.lat, lng:d.lng, acc:d.gpsAccuracy, branch:d.nearestBranch || '', branchDist: d.nearestBranchDist === '' ? null : d.nearestBranchDist });
+  renderGps();
+}
+
+/* offline queue */
+const getQueue = () => { try { return JSON.parse(lsGet(LS.queue, '[]')) || []; } catch(e){ return []; } };
+const setQueue = q => lsSet(LS.queue, q.length ? JSON.stringify(q) : null);
+function enqueue(item){ const q = getQueue(); q.push({ ...item, qid: Date.now() + '' + Math.random().toString(36).slice(2,6) }); setQueue(q); renderQueue(); }
+function renderQueue(){
+  const q = getQueue(), box = $('#queueBox');
+  if (!q.length) { box.classList.add('hidden'); return; }
+  const dup = q.filter(x => x.dup);
+  box.classList.remove('hidden');
+  box.innerHTML = `<span>มี <b>${q.length}</b> รายการที่ยังส่งไม่ได้${dup.length ? ` (${dup.length} รายการเบอร์ซ้ำ ต้องเลือกว่าจะอัปเดต)` : ''}</span>
+    <span style="display:flex;gap:6px">${dup.length ? '<button class="btn ghost sm" id="qFix">เปิดรายการเบอร์ซ้ำ</button>' : ''}<button class="btn sm" id="qSend">ส่งอีกครั้ง</button></span>`;
+  $('#qSend').onclick = () => flushQueue(true);
+  if (dup.length) $('#qFix').onclick = () => {
+    const it = dup[0]; setQueue(getQueue().filter(x => x.qid !== it.qid)); renderQueue();
+    loadIntoForm(it.lead); showDup(Object.assign({phone: it.lead.phone}, it.dupLead)); $('#dupBox').scrollIntoView({behavior:'smooth', block:'center'});
+  };
+}
+let flushing = false;
+async function flushQueue(manual){
+  if (flushing || !API) return; flushing = true;
+  const q = getQueue(); let sent = 0;
+  for (const it of q) {
+    if (it.dup) continue;
+    try {
+      const r = await apiPost({ action:'submit', mode: it.mode, lead: it.lead });
+      if (r.ok) { setQueue(getQueue().filter(x => x.qid !== it.qid)); sent++; }
+      else if (r.duplicate) { setQueue(getQueue().map(x => x.qid === it.qid ? { ...x, dup:true, dupLead:r.lead } : x)); }
+      else { setQueue(getQueue().map(x => x.qid === it.qid ? { ...x, dup:false, err:r.message } : x)); if (manual) toast('ส่งไม่สำเร็จ: ' + (r.message || ''), 'err'); }
+    } catch(e) { break; }
+  }
+  flushing = false; renderQueue();
+  if (sent) toast(`ส่งรายการค้างแล้ว ${sent} รายการ`, 'ok');
+}
+window.addEventListener('online', () => flushQueue(false));
+
+/* ---------- INIT ---------- */
+buildOptions(); updateVisibility(); renderSales(); renderQueue(); showConnBanner();
+loadConfig().then(() => flushQueue(false));
+</script>
+</body>
+</html>

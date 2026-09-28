@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="robots" content="noindex">
+<title>True × Lotus's — แดชบอร์ดผู้ดูแล</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --true:#E1251B; --true-ink:#A8170F; --true-wash:#FDECEA;
+  --lotus:#0BB9B2; --lotus-ink:#007F7A; --lotus-wash:#E1F6F5; --lotus-sun:#FDB813;
+  --ok:#1E9E4A; --wait:#E8A600; --no:#D93025; --muted-mk:#8A9199;
+  --bg:#F2F4F3; --panel:#FFFFFF; --ink:#1D2125; --ink2:#59616A; --line:#DDE2E0; --line2:#EDF0EF;
+  --focus:#1A73E8;
+  --font:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--font);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.hidden{display:none!important}
+
+/* ---------- masthead ---------- */
+.mast{position:sticky;top:env(safe-area-inset-top,0px);z-index:1000;background:var(--panel);border-bottom:1px solid var(--line)}
+.mast::before{content:"";display:block;height:4px;background:linear-gradient(90deg,var(--true) 0 50%,var(--lotus) 50% 100%)}
+.mast-in{display:flex;align-items:center;gap:14px;padding:8px 16px;max-width:1480px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:8px;min-width:0}
+.brand img{height:26px;width:auto;display:block}
+.brand .wm{font-weight:700;font-size:17px;letter-spacing:-.01em}
+.brand .wm.t{color:var(--true)} .brand .wm.l{color:var(--lotus)}
+.brand .x{color:var(--ink2);font-size:14px}
+.tabs{display:flex;gap:4px;margin-left:auto;background:var(--bg);padding:3px;border-radius:10px}
+.tabs button{border:0;background:transparent;padding:6px 14px;border-radius:8px;cursor:pointer;color:var(--ink2);font-weight:500;white-space:nowrap}
+.tabs button[aria-selected="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.banner{max-width:1480px;margin:10px auto 0;padding:10px 14px;border-radius:10px;font-size:14px;background:#FFF6DB;border:1px solid #F1D68A;color:#5B4500}
+.banner.err{background:var(--true-wash);border-color:#F3B7B2;color:var(--true-ink)}
+
+/* ---------- form ---------- */
+#formView{max-width:560px;margin:0 auto;padding:14px 12px 120px}
+.fhead{padding:6px 4px 12px}
+.fhead h1{margin:0;font-size:22px;line-height:1.3}
+.fhead p{margin:2px 0 0;color:var(--ink2);font-size:14px}
+.sec{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 14px 16px;margin-bottom:12px;position:relative;overflow:hidden}
+.sec.t{border-left:5px solid var(--true)} .sec.l{border-left:5px solid var(--lotus)}
+.sec h2{margin:0 0 10px;font-size:16px;display:flex;align-items:center;gap:8px}
+.sec h2 .tag{font-size:12px;font-weight:600;padding:1px 8px;border-radius:99px}
+.sec.t h2 .tag{background:var(--true-wash);color:var(--true-ink)} .sec.l h2 .tag{background:var(--lotus-wash);color:var(--lotus-ink)}
+.fld{margin-top:12px}
+.fld:first-of-type{margin-top:0}
+.fld>label,.fld>.lbl{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.req::after{content:" *";color:var(--true)}
+.hint{font-size:13px;color:var(--ink2);margin-top:4px}
+.inp{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px 12px;font-size:16px;min-height:46px}
+.inp:focus{border-color:var(--focus)}
+textarea.inp{min-height:84px;resize:vertical}
+.sub{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px dashed var(--line)}
+.row2{display:flex;gap:8px}.row2>*{flex:1}
+.opt{display:flex;flex-wrap:wrap;gap:8px}
+.opt button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;min-height:44px;cursor:pointer;text-align:left;flex:1 1 auto;display:flex;align-items:center;gap:8px;line-height:1.3}
+.opt button::before{content:"";width:18px;height:18px;flex:none;border:2px solid #B8C0C6;border-radius:50%}
+.opt.multi button::before{border-radius:5px}
+.opt button[aria-pressed="true"]{border-color:var(--ink);background:#F7F9F8;font-weight:600}
+.opt button[aria-pressed="true"]::before{border-color:var(--ink);background:var(--ink);box-shadow:inset 0 0 0 3px #fff}
+.sec.t .opt button[aria-pressed="true"]{border-color:var(--true);background:var(--true-wash)}
+.sec.t .opt button[aria-pressed="true"]::before{border-color:var(--true);background:var(--true)}
+.sec.l .opt button[aria-pressed="true"]{border-color:var(--lotus);background:var(--lotus-wash)}
+.sec.l .opt button[aria-pressed="true"]::before{border-color:var(--lotus);background:var(--lotus)}
+.opt.col button{flex:1 1 100%}
+.fld.bad .inp,.fld.bad .opt button{border-color:var(--true)}
+.fld .errmsg{display:none;color:var(--true-ink);font-size:13px;margin-top:4px}
+.fld.bad .errmsg{display:block}
+.btn{border:0;border-radius:10px;padding:11px 16px;min-height:46px;font-weight:600;cursor:pointer;background:var(--ink);color:#fff}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.true{background:var(--true)} .btn.lotus{background:var(--lotus-ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{min-height:36px;padding:6px 12px;font-size:14px;white-space:nowrap}
+.salesbox{display:flex;gap:8px;align-items:center}
+.salesok{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:10px;background:var(--bg)}
+.salesok b{font-family:var(--mono);font-size:17px}
+.dup{margin-top:10px;border:1px solid #F1D68A;background:#FFF8E1;border-radius:10px;padding:10px 12px;font-size:14px}
+.dup.upd{border-color:#9FD3B3;background:var(--lotus-wash)}
+.dup .acts{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.gps{display:flex;flex-direction:column;gap:8px}
+.gps .btn{width:100%;font-size:16px}
+.gpsres{font-size:14px;padding:10px 12px;border-radius:10px;background:var(--bg)}
+.submitbar{position:fixed;left:0;right:0;bottom:0;z-index:900;background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px))}
+.submitbar .in{max-width:560px;margin:0 auto;display:flex;gap:8px;align-items:center}
+.submitbar .btn{flex:1;font-size:17px;min-height:52px;background:linear-gradient(90deg,var(--true),var(--true-ink))}
+.queue{max-width:560px;margin:0 auto 12px;padding:10px 12px;border-radius:10px;background:#FFF6DB;border:1px solid #F1D68A;font-size:14px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+
+/* modal + toast */
+.modal{position:fixed;inset:0;z-index:2000;background:rgba(20,24,28,.45);display:flex;align-items:flex-end;justify-content:center}
+.modal .box{background:#fff;width:100%;max-width:560px;border-radius:16px 16px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));max-height:85vh;overflow:auto}
+.modal h3{margin:0 0 4px;font-size:18px}
+.modal .opt button{flex:1 1 100%}
+.brdist{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--ink2)}
+@media(min-width:700px){.modal{align-items:center}.modal .box{border-radius:16px}}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:3000;background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;max-width:90vw;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.toast.ok{background:var(--lotus-ink)} .toast.err{background:var(--true-ink)}
+
+/* ---------- dashboard ---------- */
+#dashView{max-width:1480px;margin:0 auto;padding:12px 16px 40px}
+.gate{max-width:420px;margin:60px auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+.gate h2{margin:0 0 6px;font-size:18px}
+.dtop{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:4px 0 10px}
+.dtop h1{margin:0;font-size:22px}
+.dtop .meta{color:var(--ink2);font-size:13px}
+.dtop .acts{display:flex;gap:8px;flex-wrap:wrap}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 53px);z-index:800}
+.filters label{display:flex;flex-direction:column;font-size:12px;color:var(--ink2);gap:3px}
+.filters .inp{min-height:36px;padding:6px 10px;font-size:14px;width:auto;min-width:140px}
+.filters input[type=date].inp{min-width:0}
+.filters .count{margin-left:auto;font-size:13px;color:var(--ink2);align-self:center}
+.decide{margin:12px 0;background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--ink);border-radius:12px;padding:12px 14px}
+.decide h2{margin:0 0 6px;font-size:15px}
+.decide ol{margin:0;padding-left:20px}
+.decide li{margin:2px 0}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.kpi .k{font-size:13px;color:var(--ink2)}
+.kpi .v{font-family:var(--mono);font-size:28px;line-height:1.2;font-variant-numeric:tabular-nums;margin-top:2px}
+.kpi .s{font-size:12px;color:var(--ink2);margin-top:2px}
+.kpi.t{border-top:3px solid var(--true)} .kpi.l{border-top:3px solid var(--lotus)}
+.kpi.ok .v{color:var(--ok)} .kpi.wait .v{color:#9C6F00} .kpi.no .v{color:var(--no)} .kpi.lo .v{color:var(--lotus-ink)}
+.grid{display:grid;gap:12px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.card h2{margin:0 0 8px;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h2 .r{margin-left:auto;display:flex;gap:6px;align-items:center;font-weight:400}
+.span2{grid-column:1/-1}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line2);text-align:left;white-space:nowrap}
+th{font-size:12px;color:var(--ink2);font-weight:600;background:#FAFBFA;position:sticky;top:0}
+th.sort{cursor:pointer;user-select:none}
+th.sort::after{content:" ↕";color:#B8C0C6}
+th.sort.asc::after{content:" ↑";color:var(--ink)} th.sort.desc::after{content:" ↓";color:var(--ink)}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+td.act{white-space:normal;min-width:200px;font-size:13px}
+tr:hover td{background:#F7F9F8}
+.delta.up{color:var(--ok)} .delta.dn{color:var(--no)}
+.seg{display:inline-flex;background:var(--bg);border-radius:8px;padding:2px}
+.seg button{border:0;background:transparent;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--ink2)}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.chartbox{position:relative;height:260px}
+.chartbox.tall{height:300px}
+#map{height:520px;border-radius:10px;border:1px solid var(--line);background:#EEF1F0}
+.maptools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:8px;font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:10px}
+.legend label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.sq{width:12px;height:12px;border-radius:3px;display:inline-block;background:var(--lotus-ink);box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.leaflet-container{font-family:var(--font)!important}
+.leaflet-tooltip.mk{font-size:13px;line-height:1.4;padding:6px 8px}
+.pop b{font-size:14px} .pop div{font-size:13px}
+.brks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.cb-list{max-height:420px;overflow:auto}
+.empty{color:var(--ink2);font-size:14px;padding:18px 4px;text-align:center}
+.pill{display:inline-block;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--bg);white-space:nowrap}
+.pill.ok{background:#E2F4E8;color:#146C33} .pill.wait{background:#FFF1C9;color:#7A5600} .pill.no{background:var(--true-wash);color:var(--true-ink)}
+.pill.now{background:var(--true);color:#fff}
+a.tel{color:var(--true-ink);font-family:var(--mono);text-decoration:none;font-weight:500}
+@media(max-width:1200px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.brks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}.brks{grid-template-columns:minmax(0,1fr)}#map{height:420px}.filters{position:static}}
+@media(max-width:520px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.mast-in{padding:8px 10px;gap:8px}.brand .wm{font-size:15px}.tabs button{padding:6px 10px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.role{margin-left:auto;font-size:13px;color:var(--ink2);white-space:nowrap}
+.mast .acts{margin-left:auto;display:flex;gap:6px;align-items:center}
+.diag{margin:12px 0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.diag h2{margin:0 0 8px;font-size:15px}
+.diag ol{margin:0;padding-left:0;list-style:none}
+.diag li{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--line2);font-size:14px}
+.diag li:last-child{border-bottom:0}
+.diag .st{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff;background:var(--muted-mk)}
+.diag .st.ok{background:var(--ok)} .diag .st.bad{background:var(--no)} .diag .st.skip{background:#C9D0CD}
+.diag .fix{color:var(--ink2);font-size:13px}
+.inst-date{min-height:32px;padding:3px 6px;font-size:13px;border:1px solid var(--line);border-radius:8px}
+.pill.late{background:var(--no);color:#fff} .pill.today{background:var(--wait);color:#3D2C00} .pill.done{background:#E2F4E8;color:#146C33}
+.libmsg{color:var(--ink2);font-size:14px;padding:30px 10px;text-align:center}
+.pill.lo{background:var(--lotus-wash);color:var(--lotus-ink)}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="mast-in">
+    <div class="brand" aria-label="True × Lotus's">
+      <img src="logo-true.png" alt="True" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'wm t',textContent:'True'}))">
+      <span class="x">×</span>
+      <img src="logo-lotus.png" alt="Lotus's" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'wm l',textContent:'Lotus\u2019s'}))">
+    </div>
+    <div class="acts"><span class="role">แดชบอร์ดผู้ดูแล</span><a class="btn ghost sm" href="index.html" style="text-decoration:none">เปิดหน้าฟอร์มเซลล์</a><button class="btn ghost sm" id="logoutBtn">ออกจากระบบ</button></div>
+  </div>
+</header>
+<div id="connBanner" class="banner hidden"></div>
+
+<main id="dashView">
+  <div id="gate" class="gate hidden">
+    <h2>เข้าสู่แดชบอร์ดผู้ดูแล</h2>
+    <p class="hint" style="margin:0 0 12px">ใส่รหัสผู้ดูแล (DASHBOARD_KEY ในชีต Settings)</p>
+    <input id="keyInp" class="inp" autocomplete="off" placeholder="รหัสผู้ดูแล" type="password">
+    <div id="keyErr" class="hint hidden" style="color:var(--true-ink)"></div>
+    <button class="btn true" id="keyBtn" style="width:100%;margin-top:10px">เปิดแดชบอร์ด</button>
+  </div>
+
+  <div id="dash" class="hidden">
+    <div class="dtop">
+      <div><h1>ผลการเข้าพบร้านค้า</h1><div class="meta" id="dMeta"></div></div>
+      <div class="acts">
+        <button class="btn ghost sm" id="refreshBtn">รีเฟรชข้อมูล</button>
+        <button class="btn ghost sm" id="diagBtn">ตรวจการเชื่อมต่อ</button>
+        <button class="btn ghost sm" id="csvBtn">Export CSV</button>
+        <button class="btn sm" id="xlsxBtn">Export Excel</button>
+      </div>
+    </div>
+
+    <div class="filters">
+      <label>ตั้งแต่<input type="date" id="fFrom" class="inp"></label>
+      <label>ถึง<input type="date" id="fTo" class="inp"></label>
+      <label>อำเภอ<input id="fDist" class="inp" list="dlDist" placeholder="ทั้งหมด"></label>
+      <label>เซลล์<input id="fSales" class="inp" list="dlSales" placeholder="ทั้งหมด"></label>
+      <label>ผลเน็ตทรู<input id="fNet" class="inp" list="dlNet" placeholder="ทั้งหมด"></label>
+      <label>ผลโลตัส<input id="fLotus" class="inp" list="dlLotus" placeholder="ทั้งหมด"></label>
+      <label>ประเภทร้าน<input id="fType" class="inp" list="dlType" placeholder="ทั้งหมด"></label>
+      <button class="btn ghost sm" id="fReset">ล้างตัวกรอง</button>
+      <span class="count" id="fCount"></span>
+      <datalist id="dlDist"></datalist><datalist id="dlSales"></datalist><datalist id="dlNet"></datalist><datalist id="dlLotus"></datalist><datalist id="dlType"></datalist>
+    </div>
+
+    <section class="diag hidden" id="diag"><h2>ตรวจการเชื่อมต่อ</h2><ol id="diagList"></ol></section>
+
+    <section class="decide"><h2>สิ่งที่ควรทำต่อ</h2><ol id="decideList"></ol></section>
+
+    <div class="kpis" id="kpis"></div>
+
+    <div class="grid">
+      <section class="card span2">
+        <h2>สรุปรายอำเภอ <span class="hint">คลิกหัวคอลัมน์เพื่อเรียงลำดับ</span></h2>
+        <div class="tbl-wrap"><table id="distTbl"></table></div>
+        <div class="chartbox" style="margin-top:10px"><canvas id="distChart"></canvas></div>
+      </section>
+
+      <section class="card span2">
+        <h2>แผนที่การเข้าพบ
+          <span class="r"><span class="seg" id="lensSeg"><button aria-pressed="true" data-lens="net">สีตามผลเน็ตทรู</button><button aria-pressed="false" data-lens="lotus">สีตามผลโลตัส</button></span></span>
+        </h2>
+        <div class="maptools">
+          <div class="legend" id="legend"></div>
+          <label><input type="checkbox" id="lyBranch" checked> <span class="sq" style="background:var(--lotus)"></span> สาขา Lotus's</label>
+          <label><input type="checkbox" id="lyLabels"> ชื่อถนน/สถานที่</label>
+          <span class="hint" id="mapNote"></span>
+        </div>
+        <div id="map"></div>
+      </section>
+
+      <section class="card">
+        <h2>Leaderboard รายเซลล์</h2>
+        <div class="tbl-wrap"><table id="lbTbl"></table></div>
+      </section>
+
+      <section class="card">
+        <h2>รายการที่ต้องโทรกลับ
+          <span class="r"><span class="seg" id="cbSeg"><button aria-pressed="true" data-cb="">ทั้งหมด</button><button aria-pressed="false" data-cb="ทันที">ทันที</button><button aria-pressed="false" data-cb="เช้า">เช้า</button><button aria-pressed="false" data-cb="บ่าย">บ่าย</button></span></span>
+        </h2>
+        <div class="cb-list tbl-wrap"><table id="cbTbl"></table></div>
+      </section>
+
+      <section class="card span2">
+        <h2>ติดตามการติดตั้งเน็ตทรู
+          <span class="r"><span class="seg" id="instSeg"><button aria-pressed="true" data-inst="">ทั้งหมด</button><button aria-pressed="false" data-inst="late">เลยกำหนด / ไม่มีวันนัด</button><button aria-pressed="false" data-inst="week">ภายใน 7 วัน</button><button aria-pressed="false" data-inst="done">ติดตั้งแล้ว</button></span></span>
+        </h2>
+        <div class="cb-list tbl-wrap"><table id="instTbl"></table></div>
+      </section>
+
+      <section class="card span2">
+        <h2>แนวโน้มการเข้าพบและยอดปิดการขาย
+          <span class="r"><span class="seg" id="trSeg"><button aria-pressed="true" data-tr="d">รายวัน</button><button aria-pressed="false" data-tr="w">รายสัปดาห์</button></span></span>
+        </h2>
+        <div class="chartbox tall"><canvas id="trendChart"></canvas></div>
+      </section>
+    </div>
+
+    <div class="brks" style="margin-top:12px">
+      <section class="card"><h2>ประเภทร้านค้า</h2><div class="chartbox"><canvas id="cType"></canvas></div></section>
+      <section class="card"><h2>ช่องทางเดิมของร้านที่ไม่สนใจโลตัส</h2><div class="chartbox"><canvas id="cChan"></canvas></div></section>
+      <section class="card"><h2>สินค้าโลตัสที่สนใจ</h2><div class="chartbox"><canvas id="cInt"></canvas></div></section>
+      <section class="card"><h2>เหตุผลที่ปิดเน็ตทรูไม่ได้</h2><div class="chartbox"><canvas id="cNetWhy"></canvas></div></section>
+      <section class="card"><h2>ค่ายที่ลูกค้าใช้อยู่</h2><div class="chartbox"><canvas id="cProv"></canvas></div></section>
+      <section class="card"><h2>เหตุผลที่ปิดโลตัสไม่ได้</h2><div class="chartbox"><canvas id="cLotusWhy"></canvas></div></section>
+    </div>
+  </div>
+</main>
+
+<script>
+
+/* =====================================================================
+   ตั้งค่า: วาง URL ของ Apps Script Web App (ลงท้ายด้วย /exec) ไว้ตรงนี้
+   ===================================================================== */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwPF-ud8D4AwX_4EjiXrdveVEwO0GG6A2B2lbTjnLcf71F5TDz0jCMqn44m75D6WxGUoA/exec';
+
+const OPT = {
+  shopType: ['ร้านโชห่วย','ร้านอาหาร','ร้านกาแฟ-เครื่องดื่ม','ร้านค้าส่ง','โรงแรม-ที่พัก','อื่นๆ'],
+  lotusInterest: ['อาหารสด','อาหารแห้ง','แช่แข็ง','เครื่องดื่ม','ของใช้ภายในบ้าน'],
+  netResult: ['ปิดการขายได้','รอตัดสินใจ','ไม่สนใจ'],
+  netReason: ['ใช้ทรูอยู่แล้ว','ใช้ค่ายอื่นอยู่'],
+  netProvider: ['AIS','NT','อื่นๆ'],
+  netWhy: ['ติดสัญญาอยู่','ราคาไม่ดึงดูดใจ','ไม่มีอำนาจตัดสินใจ','อื่นๆ'],
+  callbackTime: ['เช้า','บ่าย','ทันที'],
+  lotusCallbackTime: ['เช้า','บ่าย','ทันที'],
+  lotusResult: ['สั่งซื้อแล้ว','สนใจรอติดตาม','ไม่สนใจ'],
+  lotusWhy: ['ราคาสูงกว่าช่องทางอื่น','ไม่มีสินค้าที่ต้องการ','รอบเวลาการจัดส่งไม่ยืดหยุ่นพอ','แอปฯ ใช้งานยาก','ไม่มีพนักงานดูแลใกล้ชิด'],
+  channels: ['แม็คโคร','บิ๊กซี','ซีเจ','ท็อปส์','ตลาดสด','ยี่ปั๊ว','รถเร่','แอปฯ ออนไลน์','อื่นๆ'],
+  district: ['เมืองสมุทรปราการ','บางพลี','บางบ่อ','บางเสาธง','พระประแดง','พระสมุทรเจดีย์','อื่นๆ']
+};
+const DIST6 = OPT.district.slice(0,6);
+const LABELS = {
+  id:'รหัส Lead', createdAt:'บันทึกครั้งแรก', updatedAt:'อัปเดตล่าสุด', visitCount:'จำนวนครั้งที่เข้าพบ', salesCode:'รหัสเซลล์ (ล่าสุด)', firstSalesCode:'รหัสเซลล์ (ครั้งแรก)',
+  custName:'ชื่อลูกค้า', phone:'เบอร์โทร', shopName:'ชื่อร้านค้า', shopType:'ประเภทร้านค้า', shopTypeOther:'ประเภทร้าน (อื่นๆ)', lotusInterest:'สินค้าโลตัสที่สนใจ',
+  netResult:'ผลเสนอเน็ตทรู', netReason:'เหตุผลไม่สนใจเน็ตทรู', netProvider:'ค่ายที่ใช้อยู่', netProviderOther:'ค่ายที่ใช้อยู่ (อื่นๆ)', netWhy:'ทำไมไม่ย้ายมาทรู', contractEnd:'สัญญาหมดเมื่อ', netWhyOther:'เหตุผลไม่ย้าย (อื่นๆ)',
+  netClosedAt:'วันที่ปิดเน็ตทรูได้', installDate:'วันนัดติดตั้งเน็ตทรู', installStatus:'สถานะติดตั้ง', installedAt:'วันที่ยืนยันติดตั้ง', callbackTime:'เวลาโทรกลับ (เน็ตทรู)', lotusResult:'ผลเสนอสินค้าโลตัส', lotusCallbackTime:'เวลาโทรกลับ (โลตัส)', lotusWhy:'เหตุผลไม่สนใจโลตัส', lotusOrderedAt:'วันที่สั่งโลตัส',
+  channels:'ช่องทางสั่งซื้อเดิม', channelApp:'แอปฯ ออนไลน์ที่ใช้', channelOther:'ช่องทางอื่นๆ', district:'อำเภอ', districtOther:'อำเภอ (อื่นๆ)',
+  lat:'ละติจูด', lng:'ลองจิจูด', gpsAccuracy:'ความแม่นยำ GPS (ม.)', nearestBranch:"สาขา Lotus's ใกล้สุด", nearestBranchDist:'ระยะถึงสาขา (กม.)', note:'บันทึกเพิ่มเติม'
+};
+const LS = { sales:'txl_sales', salesName:'txl_sales_name', key:'txl_key', queue:'txl_queue', api:'txl_api' };
+
+/* ---------- utilities ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const lsGet = (k, d=null) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch(e){ return d; } };
+const lsSet = (k, v) => { try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch(e){} };
+const pct = (a,b) => b ? a/b*100 : null;
+const fmtPct = v => v === null ? '–' : v.toFixed(1) + '%';
+const fmtN = v => (v ?? 0).toLocaleString('th-TH');
+const maskPhone = p => p && p.length === 10 ? p.slice(0,3) + '-XXX-' + p.slice(6) : (p || '');
+const pad = n => String(n).padStart(2,'0');
+const dKey = d => d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+const thDate = iso => { if(!iso) return ''; const d = new Date(iso); if (isNaN(d)) return iso; return d.toLocaleString('th-TH',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'}); };
+function show(id, on){ document.querySelector(id).classList.toggle('hidden', !on); }
+function toast(msg, cls='') { const t = document.createElement('div'); t.className = 'toast ' + cls; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3500); }
+function haversine(a,b,c,d){ const R=6371, r=x=>x*Math.PI/180; const dl=r(c-a), dg=r(d-b); const h=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dg/2)**2; return 2*R*Math.asin(Math.sqrt(h)); }
+function loadScript(src){ return new Promise((res,rej)=>{ if (document.querySelector('script[src="'+src+'"]')) return res(); const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new Error('load '+src)); document.head.appendChild(s); }); }
+function loadCss(href){ if (document.querySelector('link[href="'+href+'"]')) return; const l=document.createElement('link'); l.rel='stylesheet'; l.href=href; document.head.appendChild(l); }
+
+/* ---------- API ---------- */
+const qp = new URLSearchParams(location.search);
+if (qp.get('api')) lsSet(LS.api, qp.get('api'));
+const API = (SCRIPT_URL || lsGet(LS.api, '') || '').trim();
+
+async function apiGet(params){
+  if (!API) throw new Error('no_api');
+  const u = API + (API.includes('?') ? '&' : '?') + new URLSearchParams(params).toString();
+  const r = await fetch(u, { method:'GET', redirect:'follow' });
+  if (!r.ok) throw new Error('http ' + r.status);
+  return r.json();
+}
+async function apiPost(body){
+  if (!API) throw new Error('no_api');
+  const r = await fetch(API, { method:'POST', redirect:'follow', body: JSON.stringify(body) }); // text/plain = ไม่มี preflight
+  if (!r.ok) throw new Error('http ' + r.status);
+  return r.json();
+}
+
+let CFG = { branches: [], hasSalesList: false, loaded: false };
+async function loadConfig(){
+  try { const c = await apiGet({action:'config'}); if (c.ok) CFG = { branches: c.branches || [], hasSalesList: !!c.hasSalesList, loaded: true }; }
+  catch(e){ /* ใช้งานต่อได้ ถ้าเน็ตหลุดจะเก็บคิวไว้ */ }
+}
+
+function showConnBanner(){
+  const b = $('#connBanner');
+  if (!API) { b.classList.remove('hidden'); b.classList.add('err'); b.textContent = 'ยังไม่ได้เชื่อมต่อ Google Sheet — ผู้ดูแลต้องใส่ URL ของ Apps Script ในตัวแปร SCRIPT_URL ก่อนใช้งาน (ตอนนี้ข้อมูลที่กรอกจะถูกเก็บไว้ในเครื่องนี้ชั่วคราว)'; }
+  else b.classList.add('hidden');
+}
+
+/* =====================================================================
+   DASHBOARD
+   ===================================================================== */
+const LIBS = {
+  leafletCss: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',
+  leaflet: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js',
+  chart: 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
+  xlsx: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+  topo: 'https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js',
+  world: 'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json'
+};
+const D = { leads: [], names: {}, filtered: [], sort: { dist: ['visits','desc'], lb: ['closed','desc'] }, lens: 'net', trend: 'd', cb: '', charts: {}, map: null, libs: false, loadedAt: null };
+const COL = { ok: getCss('--ok'), wait: getCss('--wait'), no: getCss('--no'), true: getCss('--true'), lotus: getCss('--lotus'), muted: getCss('--muted-mk') };
+function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+const NET_CAT = { 'ปิดการขายได้':'ok', 'รอตัดสินใจ':'wait', 'ไม่สนใจ':'no' };
+const LOT_CAT = { 'สั่งซื้อแล้ว':'ok', 'สนใจรอติดตาม':'wait', 'ไม่สนใจ':'no' };
+const distOf = l => DIST6.includes(l.district) ? l.district : 'อื่นๆ';
+// รายการโทรกลับแยกตามสินค้า (Lead เก่าที่บันทึกก่อนแยกช่อง ใช้ callbackTime เดิมเป็นค่าของโลตัสเมื่อเน็ตไม่ได้รอตัดสินใจ)
+function cbItems(l){
+  const out = [];
+  if (l.netResult === 'รอตัดสินใจ' && l.callbackTime) out.push({ prod:'net', time:l.callbackTime });
+  const lt = l.lotusCallbackTime || (l.netResult !== 'รอตัดสินใจ' ? l.callbackTime : '');
+  if (l.lotusResult === 'สนใจรอติดตาม' && lt) out.push({ prod:'lotus', time:lt });
+  return out;
+}
+const needsCallback = l => cbItems(l).length > 0;
+const todayKey = () => dKey(new Date());
+function instInfo(l){
+  if (l.netResult !== 'ปิดการขายได้') return null;
+  if (l.installStatus === 'ติดตั้งแล้ว') return { k:'done', t:'ติดตั้งแล้ว', ord:4 };
+  if (!l.installDate) return { k:'nodate', t:'ไม่มีวันนัด', ord:0 };
+  const d = Math.round((new Date(l.installDate + 'T00:00:00') - new Date(todayKey() + 'T00:00:00')) / 86400000);
+  if (d < 0) return { k:'late', t:`เลยกำหนด ${-d} วัน`, ord:1, d };
+  if (d === 0) return { k:'today', t:'นัดวันนี้', ord:2, d };
+  return { k:'soon', t:`อีก ${d} วัน`, ord:3, d };
+}
+const salesLabel = c => D.names[c] ? `${c} · ${D.names[c]}` : c;
+
+async function openDashboard(){
+  const key = lsGet(LS.key, '');
+  if (!key) { show('#gate', true); show('#dash', false); $('#keyInp').focus(); return; }
+  show('#gate', false); show('#dash', true);
+  await fetchData();
+}
+$('#keyBtn').addEventListener('click', async () => {
+  const k = $('#keyInp').value.trim(); if (!k) return;
+  lsSet(LS.key, k); $('#keyErr').classList.add('hidden'); await openDashboard();
+});
+$('#keyInp').addEventListener('keydown', e => { if (e.key === 'Enter') $('#keyBtn').click(); });
+$('#logoutBtn').addEventListener('click', () => { lsSet(LS.key, null); $('#keyInp').value = ''; show('#dash', false); show('#gate', true); });
+
+let libsPromise = null;
+function ensureLibs(){
+  if (!libsPromise) libsPromise = (async () => {
+    loadCss(LIBS.leafletCss);
+    await Promise.all([loadScript(LIBS.leaflet), loadScript(LIBS.chart)]);
+    Chart.defaults.font.family = getCss('--font'); Chart.defaults.color = getCss('--ink2');
+    initMap();
+    D.libs = true;
+  })();
+  return libsPromise;
+}
+function showLibFail(){
+  const msg = 'โหลดแผนที่และกราฟไม่ได้ — เครือข่ายนี้อาจบล็อก cdnjs.cloudflare.com (ตัวเลขและตารางด้านบนยังใช้งานได้ตามปกติ)';
+  $('#map').innerHTML = `<div class="libmsg">${msg}</div>`;
+  $$('.chartbox').forEach(b => { if (!b.querySelector('.libmsg')) b.insertAdjacentHTML('beforeend', `<div class="libmsg">${msg}</div>`); });
+}
+
+async function fetchData(){
+  $('#dMeta').textContent = 'กำลังโหลดข้อมูล…';
+  let r;
+  try {
+    if (!CFG.loaded) await loadConfig();
+    r = await apiGet({ action:'list', key: lsGet(LS.key, '') });
+  } catch(e) {
+    $('#dMeta').textContent = 'โหลดข้อมูลไม่สำเร็จ — ดูผลตรวจการเชื่อมต่อด้านล่าง';
+    runDiag(); return;
+  }
+  if (!r.ok) {
+    if (r.error === 'bad_key') { lsSet(LS.key, null); show('#dash', false); show('#gate', true); $('#keyErr').textContent = 'รหัสผู้ดูแลไม่ถูกต้อง — ดูรหัสได้ที่ชีต Settings ช่อง DASHBOARD_KEY'; $('#keyErr').classList.remove('hidden'); return; }
+    $('#dMeta').textContent = 'หลังบ้านแจ้งข้อผิดพลาด — ดูผลตรวจการเชื่อมต่อด้านล่าง';
+    runDiag(); return;
+  }
+  D.leads = r.leads || []; D.names = r.salesNames || {}; D.loadedAt = new Date();
+  if (D.leads.length) show('#diag', false); else runDiag();
+  fillFilterLists();
+  applyFilters();
+  ensureLibs().then(() => { drawBranches(); renderVisual(); }).catch(() => showLibFail());
+}
+
+/* ตรวจการเชื่อมต่อทีละขั้น */
+async function runDiag(){
+  show('#diag', true);
+  const steps = [];
+  const paint = () => { $('#diagList').innerHTML = steps.map(([st, t, fix]) => `<li><span class="st ${st}">${st === 'ok' ? '✓' : st === 'bad' ? '!' : '–'}</span><div><div>${t}</div>${fix ? `<div class="fix">${fix}</div>` : ''}</div></li>`).join(''); };
+  const skip = names => names.forEach(n => steps.push(['skip', n, 'ยังตรวจไม่ได้ ต้องแก้ข้อด้านบนก่อน']));
+  steps.push(['skip', 'กำลังตรวจ…', '']); paint(); steps.length = 0;
+  if (!API) { steps.push(['bad', 'ยังไม่ได้ใส่ URL ของ Apps Script', 'ใส่ Web app URL (ลงท้าย /exec) ในบรรทัด SCRIPT_URL ของทั้ง index.html และ admin.html']); skip(['ติดต่อ Apps Script', 'รหัสผู้ดูแล', 'ข้อมูลในชีต Leads']); paint(); return; }
+  steps.push(/\/exec(\?|$)/.test(API) ? ['ok', 'ใส่ URL ของ Apps Script แล้ว', ''] : ['bad', 'URL ไม่ได้ลงท้ายด้วย /exec', 'ต้องใช้ Web app URL จาก Deploy (ลงท้าย /exec) ไม่ใช่ลิงก์หน้าแก้ไขสคริปต์หรือ /dev']);
+  let ping;
+  try { ping = await apiGet({ action:'ping' }); }
+  catch(e) { steps.push(['bad', 'ติดต่อ Apps Script ไม่ได้', 'ตรวจการ Deploy: Execute as = Me และ Who has access = Anyone (ห้ามเลือก Anyone with Google account) หรือเช็กว่าอินเทอร์เน็ตใช้งานได้']); skip(['รหัสผู้ดูแล', 'ข้อมูลในชีต Leads']); paint(); return; }
+  if (!ping || ping.service !== 'truexlotus-lead') { steps.push(['bad', 'URL นี้ไม่ใช่สคริปต์ของระบบนี้', 'ตรวจว่าวางโค้ด Code.gs แล้ว Deploy และคัดลอก URL ของ deployment นั้น']); skip(['รหัสผู้ดูแล', 'ข้อมูลในชีต Leads']); paint(); return; }
+  steps.push((ping.version || 1) >= 2 ? ['ok', 'ติดต่อ Apps Script ได้', ''] : ['bad', 'หลังบ้านยังเป็นเวอร์ชันเก่า', 'วาง Code.gs ชุดใหม่ แล้วไปที่ Deploy → Manage deployments → Edit → Version: New version']);
+  let list;
+  try { list = await apiGet({ action:'list', key: lsGet(LS.key, '') }); }
+  catch(e) { steps.push(['bad', 'อ่านข้อมูลไม่สำเร็จ', 'ลองกดรีเฟรชอีกครั้ง']); skip(['ข้อมูลในชีต Leads']); paint(); return; }
+  if (!list.ok) {
+    steps.push(list.error === 'bad_key' ? ['bad', 'รหัสผู้ดูแลไม่ถูกต้อง', 'ดูรหัสที่ชีต Settings ช่อง DASHBOARD_KEY แล้วกด "ออกจากระบบ" เพื่อใส่ใหม่'] : ['bad', 'หลังบ้านแจ้งข้อผิดพลาด: ' + esc(list.message || ''), 'ถ้ายังไม่เคยรันฟังก์ชัน setup ใน Apps Script ให้รันหนึ่งครั้ง']);
+    skip(['ข้อมูลในชีต Leads']); paint(); return;
+  }
+  steps.push(['ok', 'รหัสผู้ดูแลถูกต้อง', '']);
+  const n = (list.leads || []).length;
+  steps.push(n ? ['ok', `มีข้อมูลในชีต Leads ${fmtN(n)} ร้าน`, ''] : ['bad', 'ยังไม่มีข้อมูลในชีต Leads', 'ถ้าเซลล์กรอกแล้วแต่ไม่เข้า ให้เปิดหน้าฟอร์มดูว่ามีแถบแดง "ยังไม่ได้เชื่อมต่อ" หรือกล่อง "รายการที่ยังส่งไม่ได้" หรือไม่ ถ้ามี แปลว่าหน้าฟอร์มยังไม่ได้ใส่ URL เดียวกับหน้านี้']);
+  paint();
+}
+$('#diagBtn').addEventListener('click', runDiag);
+$('#refreshBtn').addEventListener('click', () => fetchData());
+setInterval(() => { if (!$('#dashView').classList.contains('hidden') && !$('#dash').classList.contains('hidden') && document.visibilityState === 'visible') fetchData(); }, 5*60*1000);
+
+/* filters */
+function fillFilterLists(){
+  const opts = (id, arr) => $(id).innerHTML = arr.map(v => `<option value="${esc(v)}">`).join('');
+  opts('#dlDist', OPT.district);
+  opts('#dlSales', [...new Set(D.leads.map(l => l.salesCode).filter(Boolean))].sort().map(salesLabel));
+  opts('#dlNet', OPT.netResult); opts('#dlLotus', OPT.lotusResult); opts('#dlType', OPT.shopType);
+}
+['#fFrom','#fTo','#fDist','#fSales','#fNet','#fLotus','#fType'].forEach(id => $(id).addEventListener('input', () => applyFilters()));
+$('#fReset').addEventListener('click', () => { ['#fFrom','#fTo','#fDist','#fSales','#fNet','#fLotus','#fType'].forEach(id => $(id).value = ''); applyFilters(); });
+const fMatch = (val, q) => !q || (val || '').toLowerCase().includes(q.trim().toLowerCase());
+function applyFilters(){
+  const from = $('#fFrom').value, to = $('#fTo').value;
+  const fd = $('#fDist').value, fs = $('#fSales').value.split(' · ')[0], fn = $('#fNet').value, fl = $('#fLotus').value, ft = $('#fType').value;
+  D.filtered = D.leads.filter(l => {
+    const k = l.createdAt ? dKey(new Date(l.createdAt)) : '';
+    if (from && k < from) return false;
+    if (to && k > to) return false;
+    if (fd && !(fd === 'อื่นๆ' ? distOf(l) === 'อื่นๆ' : fMatch(l.district, fd))) return false;
+    return fMatch(l.salesCode, fs) && fMatch(l.netResult, fn) && fMatch(l.lotusResult, fl) && fMatch(l.shopType, ft);
+  });
+  $('#fCount').textContent = `แสดง ${fmtN(D.filtered.length)} จาก ${fmtN(D.leads.length)} ร้าน`;
+  $('#dMeta').textContent = D.loadedAt ? 'อัปเดตข้อมูลเมื่อ ' + D.loadedAt.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}) + ' น.' : '';
+  renderAll();
+}
+
+function stats(L){
+  const s = { visits:L.length, visitsAll:0, closed:0, wait:0, no:0, lotus:0, lotusWait:0, cb:0, installed:0, instLate:0, instToday:0, instNoDate:0 };
+  L.forEach(l => { s.visitsAll += Number(l.visitCount)||1; if (l.netResult==='ปิดการขายได้') s.closed++; else if (l.netResult==='รอตัดสินใจ') s.wait++; else if (l.netResult==='ไม่สนใจ') s.no++;
+    if (l.lotusResult==='สั่งซื้อแล้ว') s.lotus++; else if (l.lotusResult==='สนใจรอติดตาม') s.lotusWait++; s.cb += cbItems(l).length;
+    const ii = instInfo(l); if (ii) { if (ii.k === 'done') s.installed++; else if (ii.k === 'late') s.instLate++; else if (ii.k === 'today') s.instToday++; else if (ii.k === 'nodate') s.instNoDate++; } });
+  s.conv = pct(s.closed, s.visits); s.lotusConv = pct(s.lotus, s.visits);
+  return s;
+}
+const countBy = (L, fn) => { const m = new Map(); L.forEach(l => [].concat(fn(l)).filter(Boolean).forEach(v => m.set(v, (m.get(v)||0)+1))); return m; };
+const topOf = m => { let b = null; m.forEach((v,k) => { if (!b || v > b[1]) b = [k,v]; }); return b; };
+
+function safe(name, fn){ try { fn(); } catch(e) { console.error('[' + name + ']', e); } }
+function renderAll(){
+  const L = D.filtered, S = stats(L);
+  safe('kpi', () => renderKpis(S)); safe('decide', () => renderDecide(L, S)); safe('district', () => renderDistrict(L, S));
+  safe('leaderboard', () => renderLeaderboard(L, S)); safe('callbacks', () => renderCallbacks(L)); safe('installs', () => renderInstalls(L));
+  if (D.libs) renderVisual();
+}
+function renderVisual(){
+  const L = D.filtered;
+  safe('districtChart', () => renderDistrict(L, stats(L))); safe('map', () => renderMap(L)); safe('trend', () => renderTrend(L)); safe('breakdowns', () => renderBreakdowns(L));
+  if (D.map) setTimeout(() => D.map.invalidateSize(), 50);
+}
+
+function renderKpis(S){
+  const k = (cls, label, val, sub) => `<div class="kpi ${cls}"><div class="k">${label}</div><div class="v">${val}</div><div class="s">${sub}</div></div>`;
+  $('#kpis').innerHTML =
+    k('', 'จำนวน visit ทั้งหมด', fmtN(S.visits), S.visitsAll > S.visits ? `ร้าน · รวมเข้าพบซ้ำเป็น ${fmtN(S.visitsAll)} ครั้ง` : 'ร้านที่เข้าพบ') +
+    k('t ok', 'ปิดเน็ตทรูได้', fmtN(S.closed), S.closed ? `ติดตั้งแล้ว ${fmtN(S.installed)} · รอติดตั้ง ${fmtN(S.closed - S.installed)}${S.instLate ? ` · เลยกำหนด ${fmtN(S.instLate)}` : ''}` : 'ร้าน') +
+    k('t', 'Conversion Rate', fmtPct(S.conv), 'ปิดเน็ตทรูได้ ÷ visit') +
+    k('t wait', 'รอตัดสินใจ', fmtN(S.wait), 'ร้านที่ต้องโทรติดตาม') +
+    k('t no', 'ไม่สนใจ', fmtN(S.no), 'ร้าน (เน็ตทรู)') +
+    k('l lo', 'สั่งสินค้าโลตัส', fmtN(S.lotus), S.visits ? `${fmtPct(S.lotusConv)} ของ visit · รอติดตาม ${fmtN(S.lotusWait)}` : 'ร้าน');
+}
+
+function renderDecide(L, S){
+  const out = [];
+  if (!L.length) { $('#decideList').innerHTML = '<li>ยังไม่มีข้อมูลการเข้าพบในช่วงที่เลือก — เริ่มจากให้เซลล์บันทึกผ่านแท็บ "บันทึกการเข้าพบ"</li>'; return; }
+  if (S.instLate) out.push(`มี <b>${S.instLate}</b> ร้านที่เลยวันนัดติดตั้งเน็ตทรูแล้วยังไม่ได้ยืนยัน — ตรวจกับทีมติดตั้งแล้วกด "ยืนยันติดตั้งแล้ว" หรือเลื่อนวันนัด`);
+  if (S.instToday) out.push(`วันนี้มีนัดติดตั้ง <b>${S.instToday}</b> ร้าน`);
+  if (S.instNoDate) out.push(`<b>${S.instNoDate}</b> ร้านที่ปิดการขายได้ยังไม่มีวันนัดติดตั้ง — ใส่วันนัดในตาราง "ติดตามการติดตั้ง"`);
+  const items = L.flatMap(cbItems), now = items.filter(x => x.time === 'ทันที');
+  if (items.length) out.push(`โทรกลับ <b>${items.length}</b> รายการ (เน็ตทรู ${items.filter(x => x.prod === 'net').length} · โลตัส ${items.filter(x => x.prod === 'lotus').length})${now.length ? ` — ด่วน <b>${now.length}</b> รายการ` : ''}`);
+  const soon = L.filter(l => { if (!l.contractEnd) return false; const [y,m] = l.contractEnd.split('-').map(Number); if (!y) return false; const end = new Date(y, m-1, 1), d = (end - new Date())/86400000; return d >= -31 && d <= 92; });
+  if (soon.length) out.push(`มี <b>${soon.length}</b> ร้านที่สัญญาค่ายอื่นหมดภายใน 3 เดือน — นัดเสนอเน็ตทรูก่อนหมดสัญญา`);
+  const byD = DIST6.map(d => ({ d, s: stats(L.filter(l => l.district === d)) })).filter(x => x.s.visits >= 5);
+  if (byD.length >= 2 && S.conv !== null) {
+    const low = byD.slice().sort((a,b) => a.s.conv - b.s.conv)[0];
+    if (low.s.conv < S.conv) out.push(`อำเภอ${esc(low.d)} ปิดเน็ตได้ ${fmtPct(low.s.conv)} ต่ำกว่าภาพรวม (${fmtPct(S.conv)}) — ทบทวนวิธีเสนอในพื้นที่นี้`);
+  }
+  const why = topOf(countBy(L.filter(l => l.netResult === 'ไม่สนใจ'), l => l.netReason === 'ใช้ค่ายอื่นอยู่' ? (l.netWhy||[]) : l.netReason));
+  if (why) out.push(`เหตุผลหลักที่ปิดเน็ตทรูไม่ได้คือ "${esc(why[0])}" (${why[1]} ร้าน)`);
+  const lw = topOf(countBy(L.filter(l => l.lotusResult === 'ไม่สนใจ'), l => l.lotusWhy));
+  if (lw) out.push(`เหตุผลหลักที่ร้านไม่สั่งโลตัสคือ "${esc(lw[0])}" (${lw[1]} ร้าน)`);
+  const noGps = L.filter(l => l.lat === null || l.lat === '').length;
+  if (noGps) out.push(`<b>${noGps}</b> ร้านไม่มีพิกัด จึงไม่แสดงบนแผนที่ — ย้ำให้เซลล์กดปักหมุดหน้าร้าน`);
+  if (!out.length) out.push('ยังไม่พบประเด็นที่ต้องเร่งจัดการในช่วงที่เลือก');
+  $('#decideList').innerHTML = out.map(x => `<li>${x}</li>`).join('');
+}
+
+/* sortable tables */
+function sortRows(rows, [key, dir]){ return rows.slice().sort((a,b) => { const x = a[key], y = b[key]; const nx = x === null || x === undefined, ny = y === null || y === undefined; if (nx && ny) return 0; if (nx) return 1; if (ny) return -1; const c = typeof x === 'string' ? x.localeCompare(y, 'th') : x - y; return dir === 'asc' ? c : -c; }); }
+function tableHTML(cols, rows, sortState){
+  const th = cols.map(c => `<th class="${c.n ? 'n ' : ''}${c.sort !== false ? 'sort' : ''} ${sortState[0] === c.k ? sortState[1] : ''}" data-k="${c.k}">${c.t}</th>`).join('');
+  const tb = rows.map(r => `<tr>${cols.map(c => `<td class="${c.n ? 'n' : ''} ${c.cls || ''}">${c.f ? c.f(r) : esc(r[c.k])}</td>`).join('')}</tr>`).join('');
+  return `<thead><tr>${th}</tr></thead><tbody>${tb}</tbody>`;
+}
+function bindSort(tblId, key, rerender){
+  $(tblId).querySelectorAll('th.sort').forEach(th => th.onclick = () => { const cur = D.sort[key]; D.sort[key] = [th.dataset.k, cur[0] === th.dataset.k && cur[1] === 'desc' ? 'asc' : 'desc']; rerender(); });
+}
+
+function districtAction(r, avg){
+  if (!r.visits) return 'ยังไม่มีการเข้าพบ — วางแผนลงพื้นที่';
+  if (r.visits < 5) return 'ข้อมูลยังน้อย — เข้าพบเพิ่มก่อนสรุปผล';
+  if (r.wait > 0 && r.wait >= r.closed) return `เร่งโทรติดตาม ${r.wait} ร้านที่รอตัดสินใจ`;
+  if (avg !== null && r.conv !== null && r.conv < avg - 5) return `ปิดได้ต่ำกว่าเฉลี่ย — เหตุผลหลัก: ${esc(r.topWhy || 'ยังไม่มีข้อมูลเหตุผล')}`;
+  if (avg !== null && r.conv !== null && r.conv > avg + 5) return 'ปิดได้ดีกว่าเฉลี่ย — เพิ่มจำนวนการเข้าพบในพื้นที่นี้';
+  return 'อยู่ระดับเฉลี่ย — รักษาจังหวะการเข้าพบ';
+}
+function renderDistrict(L, S){
+  const names = [...DIST6, 'อื่นๆ'];
+  let rows = names.map(d => {
+    const sub = L.filter(l => distOf(l) === d), s = stats(sub);
+    const tw = topOf(countBy(sub.filter(l => l.netResult === 'ไม่สนใจ'), l => l.netReason === 'ใช้ค่ายอื่นอยู่' ? (l.netWhy||[]) : l.netReason));
+    return { d, visits:s.visits, closed:s.closed, wait:s.wait, no:s.no, conv:s.conv, delta: s.conv === null || S.conv === null ? null : s.conv - S.conv, lotus:s.lotus, topWhy: tw ? tw[0] : '' };
+  }).filter(r => r.d !== 'อื่นๆ' || r.visits);
+  rows.forEach(r => r.act = districtAction(r, S.conv));
+  const sorted = sortRows(rows, D.sort.dist);
+  const cols = [
+    { k:'d', t:'อำเภอ' }, { k:'visits', t:'Visit', n:1, f:r=>fmtN(r.visits) }, { k:'closed', t:'ปิดได้', n:1, f:r=>fmtN(r.closed) },
+    { k:'wait', t:'รอติดตาม', n:1, f:r=>fmtN(r.wait) }, { k:'no', t:'ไม่สนใจ', n:1, f:r=>fmtN(r.no) },
+    { k:'conv', t:'Conversion', n:1, f:r=>fmtPct(r.conv) },
+    { k:'delta', t:'เทียบภาพรวม', n:1, f:r=> r.delta === null ? '–' : `<span class="delta ${r.delta >= 0 ? 'up' : 'dn'}">${r.delta >= 0 ? '+' : ''}${r.delta.toFixed(1)} จุด</span>` },
+    { k:'lotus', t:'สั่งโลตัส', n:1, f:r=>fmtN(r.lotus) },
+    { k:'act', t:'สิ่งที่ควรทำ', cls:'act', sort:false, f:r=>r.act }
+  ];
+  const tot = `<tr style="font-weight:600"><td>รวม</td><td class="n">${fmtN(S.visits)}</td><td class="n">${fmtN(S.closed)}</td><td class="n">${fmtN(S.wait)}</td><td class="n">${fmtN(S.no)}</td><td class="n">${fmtPct(S.conv)}</td><td class="n">–</td><td class="n">${fmtN(S.lotus)}</td><td></td></tr>`;
+  $('#distTbl').innerHTML = tableHTML(cols, sorted, D.sort.dist).replace('</tbody>', tot + '</tbody>');
+  bindSort('#distTbl', 'dist', () => renderDistrict(D.filtered, stats(D.filtered)));
+  if (typeof Chart === 'undefined' || !D.libs) return;
+  const labels = sorted.map(r => r.d);
+  drawChart('distChart', { type:'bar', data:{ labels, datasets:[
+      { label:'ปิดได้', data: sorted.map(r=>r.closed), backgroundColor: COL.ok, stack:'s' },
+      { label:'รอติดตาม', data: sorted.map(r=>r.wait), backgroundColor: COL.wait, stack:'s' },
+      { label:'ไม่สนใจ', data: sorted.map(r=>r.no), backgroundColor: COL.no, stack:'s' },
+      { label:'Conversion (%)', data: sorted.map(r=>r.conv === null ? null : +r.conv.toFixed(1)), type:'line', yAxisID:'y2', borderColor:'#1D2125', backgroundColor:'#1D2125', pointRadius:4, tension:0 } ]},
+    options:{ maintainAspectRatio:false, interaction:{mode:'index', intersect:false}, plugins:{legend:{position:'bottom'}},
+      scales:{ x:{stacked:true, grid:{display:false}}, y:{stacked:true, beginAtZero:true, ticks:{precision:0}, title:{display:true,text:'ร้าน'}}, y2:{position:'right', beginAtZero:true, max:100, grid:{display:false}, title:{display:true,text:'%'}} } } });
+}
+
+/* charts helper */
+function drawChart(id, cfg){ if (D.charts[id]) D.charts[id].destroy(); D.charts[id] = new Chart($('#'+id), cfg); }
+function barBreak(id, map, color, emptyMsg){
+  const arr = [...map.entries()].sort((a,b) => b[1]-a[1]);
+  const box = $('#'+id).parentElement;
+  let em = box.querySelector('.empty');
+  if (!arr.length) { if (D.charts[id]) { D.charts[id].destroy(); delete D.charts[id]; } $('#'+id).classList.add('hidden'); if (!em) { em = document.createElement('div'); em.className = 'empty'; box.appendChild(em); } em.textContent = emptyMsg || 'ยังไม่มีข้อมูล'; return; }
+  $('#'+id).classList.remove('hidden'); if (em) em.remove();
+  const total = arr.reduce((s,x)=>s+x[1],0);
+  drawChart(id, { type:'bar', data:{ labels: arr.map(x=>x[0]), datasets:[{ data: arr.map(x=>x[1]), backgroundColor: color, borderRadius:4 }] },
+    options:{ indexAxis:'y', maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c => `${c.raw} ร้าน (${(c.raw/total*100).toFixed(1)}% ของคำตอบ)` } } },
+      scales:{ x:{ beginAtZero:true, ticks:{precision:0} }, y:{ grid:{display:false} } } } });
+}
+function renderBreakdowns(L){
+  barBreak('cType', countBy(L, l => l.shopType === 'อื่นๆ' && l.shopTypeOther ? 'อื่นๆ: ' + l.shopTypeOther : l.shopType), '#59616A');
+  barBreak('cChan', countBy(L, l => (l.channels||[]).map(c => c === 'แอปฯ ออนไลน์' && l.channelApp ? 'แอปฯ: ' + l.channelApp : c === 'อื่นๆ' && l.channelOther ? 'อื่นๆ: ' + l.channelOther : c)), '#7C8791');
+  barBreak('cInt', countBy(L, l => l.lotusInterest), COL.lotus);
+  barBreak('cNetWhy', countBy(L.filter(l => l.netResult === 'ไม่สนใจ'), l => l.netReason === 'ใช้ค่ายอื่นอยู่' ? (l.netWhy||[]).map(w => w === 'อื่นๆ' && l.netWhyOther ? 'อื่นๆ: ' + l.netWhyOther : w) : l.netReason), COL.true, 'ยังไม่มีร้านที่ไม่สนใจเน็ตทรู');
+  barBreak('cProv', countBy(L.filter(l => l.netProvider), l => l.netProvider === 'อื่นๆ' && l.netProviderOther ? l.netProviderOther : l.netProvider), '#A8170F', 'ยังไม่มีข้อมูลค่ายที่ใช้อยู่');
+  barBreak('cLotusWhy', countBy(L.filter(l => l.lotusResult === 'ไม่สนใจ'), l => l.lotusWhy), COL.lotus, 'ยังไม่มีร้านที่ไม่สนใจโลตัส');
+}
+
+/* leaderboard */
+function renderLeaderboard(L, S){
+  const g = new Map(); L.forEach(l => { const k = l.salesCode || '(ไม่ระบุ)'; if (!g.has(k)) g.set(k, []); g.get(k).push(l); });
+  const rows = [...g.entries()].map(([code, arr]) => { const s = stats(arr), td = topOf(countBy(arr, distOf));
+    return { code, name: D.names[code] || '', visits:s.visits, closed:s.closed, conv:s.conv, delta: s.conv === null || S.conv === null ? null : s.conv - S.conv, lotus:s.lotus, cb:s.cb, top: td ? td[0] : '' }; });
+  if (!rows.length) { $('#lbTbl').innerHTML = '<tbody><tr><td class="empty">ยังไม่มีข้อมูล</td></tr></tbody>'; return; }
+  const cols = [
+    { k:'code', t:'เซลล์', f:r => `<span class="num">${esc(r.code)}</span>${r.name ? ` <span class="hint">${esc(r.name)}</span>` : ''}` },
+    { k:'visits', t:'Visit', n:1, f:r=>fmtN(r.visits) }, { k:'closed', t:'ปิดได้', n:1, f:r=>fmtN(r.closed) },
+    { k:'conv', t:'Conversion', n:1, f:r=>fmtPct(r.conv) },
+    { k:'delta', t:'เทียบทีม', n:1, f:r => r.delta === null ? '–' : `<span class="delta ${r.delta >= 0 ? 'up' : 'dn'}">${r.delta >= 0 ? '+' : ''}${r.delta.toFixed(1)}</span>` },
+    { k:'lotus', t:'สั่งโลตัส', n:1, f:r=>fmtN(r.lotus) }, { k:'cb', t:'ค้างโทรกลับ', n:1, f:r=>fmtN(r.cb) },
+    { k:'top', t:'อำเภอที่ไปบ่อยสุด' }
+  ];
+  $('#lbTbl').innerHTML = tableHTML(cols, sortRows(rows, D.sort.lb), D.sort.lb);
+  bindSort('#lbTbl', 'lb', () => renderLeaderboard(D.filtered, stats(D.filtered)));
+}
+
+/* callbacks */
+$('#cbSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; D.cb = b.dataset.cb; $$('#cbSeg button').forEach(x => x.setAttribute('aria-pressed', x === b)); renderCallbacks(D.filtered); });
+function renderCallbacks(L){
+  const order = { 'ทันที':0, 'เช้า':1, 'บ่าย':2 };
+  const rows = L.flatMap(l => cbItems(l).map(it => ({ l, ...it }))).filter(x => !D.cb || x.time === D.cb)
+    .sort((a,b) => (order[a.time] - order[b.time]) || (new Date(a.l.updatedAt) - new Date(b.l.updatedAt)));
+  if (!rows.length) { $('#cbTbl').innerHTML = '<tbody><tr><td class="empty">ไม่มีรายการที่ต้องโทรกลับ</td></tr></tbody>'; return; }
+  const today = new Date();
+  $('#cbTbl').innerHTML = `<thead><tr><th>ช่วงเวลา</th><th>เรื่อง</th><th>ร้าน / ลูกค้า</th><th>โทร</th><th class="n">รอมาแล้ว</th><th>เซลล์</th></tr></thead><tbody>` +
+    rows.map(({ l, prod, time }) => { const days = Math.max(0, Math.floor((today - new Date(l.updatedAt || l.createdAt))/86400000));
+      return `<tr><td><span class="pill ${time === 'ทันที' ? 'now' : ''}">${esc(time)}</span></td><td>${prod === 'net' ? '<span class="pill no">เน็ตทรู</span>' : '<span class="pill lo">โลตัส</span>'}</td><td>${esc(l.shopName)}<br><span class="hint">${esc(l.custName)} · ${esc(l.district)}</span></td><td><a class="tel" href="tel:${esc(l.phone)}">${esc(l.phone)}</a></td><td class="n">${days} วัน</td><td class="num">${esc(l.salesCode)}</td></tr>`; }).join('') + '</tbody>';
+}
+
+/* ติดตามการติดตั้งเน็ตทรู */
+D.inst = '';
+$('#instSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; D.inst = b.dataset.inst; $$('#instSeg button').forEach(x => x.setAttribute('aria-pressed', x === b)); renderInstalls(D.filtered); });
+function renderInstalls(L){
+  const rows = L.map(l => ({ l, ii: instInfo(l) })).filter(x => x.ii)
+    .filter(x => !D.inst || (D.inst === 'late' ? (x.ii.k === 'late' || x.ii.k === 'nodate') : D.inst === 'week' ? (x.ii.k === 'today' || (x.ii.k === 'soon' && x.ii.d <= 7)) : x.ii.k === 'done'))
+    .sort((a,b) => (a.ii.ord - b.ii.ord) || String(a.l.installDate).localeCompare(String(b.l.installDate)));
+  if (!rows.length) { $('#instTbl').innerHTML = `<tbody><tr><td class="empty">${L.some(l => l.netResult === 'ปิดการขายได้') ? 'ไม่มีรายการในตัวกรองนี้' : 'ยังไม่มีร้านที่ปิดการขายเน็ตทรูได้'}</td></tr></tbody>`; return; }
+  const cls = { done:'done', late:'late', today:'today', nodate:'late', soon:'' };
+  $('#instTbl').innerHTML = `<thead><tr><th>สถานะ</th><th>วันนัดติดตั้ง</th><th>ร้าน / ลูกค้า</th><th>โทร</th><th>เซลล์</th><th></th></tr></thead><tbody>` +
+    rows.map(({ l, ii }) => `<tr><td><span class="pill ${cls[ii.k]}">${esc(ii.t)}</span></td>
+      <td><input type="date" class="inst-date" data-id="${esc(l.id)}" value="${esc(l.installDate || '')}" aria-label="วันนัดติดตั้ง ${esc(l.shopName)}"></td>
+      <td>${esc(l.shopName)}<br><span class="hint">${esc(l.custName)} · ${esc(l.district)}</span></td>
+      <td><a class="tel" href="tel:${esc(l.phone)}">${esc(l.phone)}</a></td><td class="num">${esc(l.salesCode)}</td>
+      <td>${ii.k === 'done' ? `<button class="btn ghost sm" data-inst-id="${esc(l.id)}" data-to="รอติดตั้ง">ยกเลิกการยืนยัน</button>` : `<button class="btn lotus sm" data-inst-id="${esc(l.id)}" data-to="ติดตั้งแล้ว">ยืนยันติดตั้งแล้ว</button>`}</td></tr>`).join('') + '</tbody>';
+}
+async function saveInstall(id, patch, el){
+  if (el) el.disabled = true;
+  try {
+    const r = await apiPost({ action:'setInstall', key: lsGet(LS.key, ''), id, ...patch });
+    if (!r.ok) { toast(r.message || 'บันทึกไม่สำเร็จ', 'err'); return; }
+    const l = D.leads.find(x => x.id === id);
+    if (l) { if (patch.installDate !== undefined) l.installDate = patch.installDate; if (patch.status !== undefined) { l.installStatus = patch.status; l.installedAt = patch.status === 'ติดตั้งแล้ว' ? new Date().toISOString() : ''; } }
+    toast(patch.status === 'ติดตั้งแล้ว' ? 'ยืนยันการติดตั้งแล้ว' : patch.status ? 'ยกเลิกการยืนยันแล้ว' : 'เปลี่ยนวันนัดแล้ว', 'ok');
+    applyFilters();
+  } catch(e) { toast('บันทึกไม่สำเร็จ — ตรวจสัญญาณอินเทอร์เน็ต', 'err'); }
+  finally { if (el) el.disabled = false; }
+}
+$('#instTbl').addEventListener('click', e => { const b = e.target.closest('[data-inst-id]'); if (b) saveInstall(b.dataset.instId, { status: b.dataset.to }, b); });
+$('#instTbl').addEventListener('change', e => { const i = e.target.closest('.inst-date'); if (i && /^\d{4}-\d{2}-\d{2}$/.test(i.value)) saveInstall(i.dataset.id, { installDate: i.value }, i); });
+
+/* trend */
+$('#trSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; D.trend = b.dataset.tr; $$('#trSeg button').forEach(x => x.setAttribute('aria-pressed', x === b)); renderTrend(D.filtered); });
+function weekStart(d){ const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); const wd = (x.getDay() + 6) % 7; x.setDate(x.getDate() - wd); return x; }
+function renderTrend(L){
+  const box = $('#trendChart').parentElement; let em = box.querySelector('.empty');
+  if (!L.length) { if (D.charts.trendChart) { D.charts.trendChart.destroy(); delete D.charts.trendChart; } $('#trendChart').classList.add('hidden'); if (!em) { em = document.createElement('div'); em.className='empty'; box.appendChild(em); } em.textContent = 'ยังไม่มีข้อมูล'; return; }
+  $('#trendChart').classList.remove('hidden'); if (em) em.remove();
+  const key = iso => { const d = new Date(iso); return D.trend === 'w' ? dKey(weekStart(d)) : dKey(d); };
+  const all = [], v = new Map(), c = new Map(), o = new Map();
+  const add = (m, iso) => { if (!iso) return; const k = key(iso); m.set(k, (m.get(k)||0)+1); all.push(new Date(iso)); };
+  L.forEach(l => { add(v, l.createdAt); add(c, l.netClosedAt); add(o, l.lotusOrderedAt); });
+  const min = new Date(Math.min(...all)), max = new Date(Math.max(...all));
+  const labels = []; let cur = D.trend === 'w' ? weekStart(min) : new Date(min.getFullYear(), min.getMonth(), min.getDate());
+  const end = D.trend === 'w' ? weekStart(max) : new Date(max.getFullYear(), max.getMonth(), max.getDate());
+  let guard = 0; while (cur <= end && guard++ < 800) { labels.push(dKey(cur)); cur.setDate(cur.getDate() + (D.trend === 'w' ? 7 : 1)); }
+  const show = k => { const d = new Date(k + 'T00:00:00'); return (D.trend === 'w' ? 'สัปดาห์ ' : '') + d.toLocaleDateString('th-TH', {day:'numeric', month:'short'}); };
+  drawChart('trendChart', { type:'bar', data:{ labels: labels.map(show), datasets:[
+      { label:'Visit (ร้านใหม่)', data: labels.map(k => v.get(k)||0), backgroundColor:'#C9D0CD', borderRadius:3, order:3 },
+      { label:'ปิดเน็ตทรูได้', data: labels.map(k => c.get(k)||0), type:'line', borderColor: COL.true, backgroundColor: COL.true, tension:.25, pointRadius:3, order:1 },
+      { label:'สั่งสินค้าโลตัส', data: labels.map(k => o.get(k)||0), type:'line', borderColor: COL.lotus, backgroundColor: COL.lotus, tension:.25, pointRadius:3, order:2 } ]},
+    options:{ maintainAspectRatio:false, interaction:{mode:'index', intersect:false}, plugins:{legend:{position:'bottom'}}, scales:{ y:{beginAtZero:true, ticks:{precision:0}}, x:{grid:{display:false}} } } });
+}
+
+/* map */
+function initMap(){
+  const m = L.map('map', { preferCanvas:true, zoomControl:true, minZoom:5, maxBounds:[[4.5,96.5],[21.5,106.5]], maxBoundsViscosity:.8 }).setView([13.6, 100.65], 11);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', { subdomains:'abcd', maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>' }).addTo(m);
+  m.createPane('labels'); m.getPane('labels').style.zIndex = 300; m.getPane('labels').style.pointerEvents = 'none';
+  D.labelLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', { subdomains:'abcd', maxZoom:19, pane:'labels' });
+  D.renderer = L.canvas({ padding:.5, tolerance:6 });
+  D.visitLayer = L.layerGroup().addTo(m);
+  D.branchLayer = L.layerGroup().addTo(m);
+  D.hidden = new Set();
+  D.map = m;
+  $('#lyLabels').addEventListener('change', e => e.target.checked ? D.labelLayer.addTo(m) : m.removeLayer(D.labelLayer));
+  $('#lyBranch').addEventListener('change', e => e.target.checked ? D.branchLayer.addTo(m) : m.removeLayer(D.branchLayer));
+  $('#lensSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; D.lens = b.dataset.lens; D.hidden.clear(); $$('#lensSeg button').forEach(x => x.setAttribute('aria-pressed', x === b)); renderMap(D.filtered); });
+  maskThailand(m);
+}
+async function maskThailand(m){
+  try {
+    await loadScript(LIBS.topo);
+    const w = await (await fetch(LIBS.world)).json();
+    const geo = topojson.feature(w, w.objects.countries);
+    const th = geo.features.find(f => String(f.id) === '764'); if (!th) return;
+    const polys = th.geometry.type === 'Polygon' ? [th.geometry.coordinates] : th.geometry.coordinates;
+    const holes = polys.map(p => p[0].map(([x,y]) => [y,x]));
+    const bg = getCss('--bg');
+    m.createPane('mask'); m.getPane('mask').style.zIndex = 350; m.getPane('mask').style.pointerEvents = 'none';
+    L.polygon([[[-89,-179],[-89,179],[89,179],[89,-179]], ...holes], { pane:'mask', stroke:false, fillColor:bg, fillOpacity:1, interactive:false }).addTo(m);
+    L.polygon(holes, { pane:'mask', color:'#9AA3A0', weight:1, fill:false, interactive:false }).addTo(m);
+  } catch(e) { /* ถ้าโหลดเส้นขอบไม่ได้ แผนที่ยังใช้งานได้ปกติ */ }
+}
+function drawBranches(){
+  if (!D.map) return; D.branchLayer.clearLayers();
+  CFG.branches.forEach(b => {
+    const mk = L.circleMarker([b.lat, b.lng], { renderer:D.renderer, radius:6, color:'#fff', weight:2, fillColor:COL.lotus, fillOpacity:1 });
+    mk.bindTooltip(`Lotus's ${esc(b.name)}`, { className:'mk', direction:'top' });
+    D.branchLayer.addLayer(mk);
+  });
+  if (!CFG.branches.length) $('#mapNote').textContent = "ยังไม่มีรายชื่อสาขา Lotus's (เพิ่มได้ในชีต LotusBranches)";
+}
+function renderMap(Ls){
+  if (!D.map) return;
+  const cats = D.lens === 'net' ? { ok:'ปิดการขายได้', wait:'รอตัดสินใจ', no:'ไม่สนใจ' } : { ok:'สั่งซื้อแล้ว', wait:'สนใจรอติดตาม', no:'ไม่สนใจ' };
+  const catOf = l => (D.lens === 'net' ? NET_CAT[l.netResult] : LOT_CAT[l.lotusResult]) || 'muted';
+  const withGps = Ls.filter(l => typeof l.lat === 'number' && typeof l.lng === 'number' && !isNaN(l.lat));
+  const cnt = { ok:0, wait:0, no:0 }; withGps.forEach(l => { const c = catOf(l); if (cnt[c] !== undefined) cnt[c]++; });
+  $('#legend').innerHTML = Object.entries(cats).map(([k,t]) => `<label><input type="checkbox" data-cat="${k}" ${D.hidden.has(k) ? '' : 'checked'}> <span class="dot" style="background:${COL[k]}"></span> ${t} <span class="num hint">${cnt[k]}</span></label>`).join('');
+  $('#legend').querySelectorAll('input').forEach(i => i.onchange = () => { i.checked ? D.hidden.delete(i.dataset.cat) : D.hidden.add(i.dataset.cat); renderMap(D.filtered); });
+  D.visitLayer.clearLayers();
+  const pts = [];
+  withGps.forEach(l => {
+    const c = catOf(l); if (D.hidden.has(c)) return;
+    const mk = L.circleMarker([l.lat, l.lng], { renderer:D.renderer, radius:7, color:'#fff', weight:2, fillColor:COL[c] || COL.muted, fillOpacity:.95 });
+    mk.bindTooltip(`<b>${esc(l.shopName)}</b><br>เน็ตทรู: ${esc(l.netResult)} · โลตัส: ${esc(l.lotusResult)}`, { className:'mk', direction:'top', offset:[0,-6] });
+    mk.on('mouseover', () => mk.setStyle({ radius:11, weight:3 })); mk.on('mouseout', () => mk.setStyle({ radius:7, weight:2 }));
+    mk.bindPopup(`<div class="pop"><b>${esc(l.shopName)}</b><div>${esc(l.custName)} · <span class="num">${esc(maskPhone(l.phone))}</span></div>
+      <div>${esc(l.shopType === 'อื่นๆ' ? l.shopTypeOther || 'อื่นๆ' : l.shopType)} · ${esc(l.district === 'อื่นๆ' ? l.districtOther || 'อื่นๆ' : l.district)}</div>
+      ${instInfo(l) ? `<div>ติดตั้ง: <b>${esc(instInfo(l).t)}</b>${l.installDate ? ' (นัด ' + esc(l.installDate) + ')' : ''}</div>` : ''}
+      <div>เน็ตทรู: <b>${esc(l.netResult)}</b>${l.netReason ? ' — ' + esc(l.netReason) : ''}${l.netProvider ? ' (' + esc(l.netProvider === 'อื่นๆ' ? l.netProviderOther : l.netProvider) + ')' : ''}${(l.netWhy||[]).length ? '<br>เหตุผล: ' + esc(l.netWhy.join(', ')) : ''}${l.contractEnd ? '<br>สัญญาหมด: ' + esc(l.contractEnd) : ''}</div>
+      <div>โลตัส: <b>${esc(l.lotusResult)}</b>${(l.lotusWhy||[]).length ? ' — ' + esc(l.lotusWhy.join(', ')) : ''}</div>
+      ${(l.lotusInterest||[]).length ? `<div>สนใจ: ${esc(l.lotusInterest.join(', '))}</div>` : ''}
+      ${l.nearestBranch ? `<div>สาขาใกล้สุด: ${esc(l.nearestBranch)}${l.nearestBranchDist !== null ? ` (${Number(l.nearestBranchDist).toFixed(2)} กม.)` : ''}</div>` : ''}
+      <div class="hint">เซลล์ ${esc(l.salesCode)} · ${esc(thDate(l.updatedAt || l.createdAt))} · เข้าพบ ${esc(l.visitCount || 1)} ครั้ง</div>
+      ${l.note ? `<div>บันทึก: ${esc(l.note)}</div>` : ''}</div>`, { maxWidth: 300 });
+    D.visitLayer.addLayer(mk); pts.push([l.lat, l.lng]);
+  });
+  const miss = Ls.length - withGps.length;
+  if (CFG.branches.length) $('#mapNote').textContent = miss ? `${miss} ร้านไม่มีพิกัด` : '';
+  if (pts.length && !D.fitted) { D.map.fitBounds(pts, { padding:[30,30], maxZoom:14 }); D.fitted = true; }
+}
+
+/* export */
+function exportRows(){
+  const cols = Object.keys(LABELS);
+  return { cols, head: cols.map(c => LABELS[c]), rows: D.filtered.map(l => cols.map(c => { const v = l[c]; if (Array.isArray(v)) return v.join(', '); if (v === null || v === undefined) return ''; if ((c === 'createdAt' || c === 'updatedAt' || c === 'netClosedAt' || c === 'lotusOrderedAt') && v) return thDate(v); return v; })) };
+}
+const fname = ext => `truexlotus-leads-${dKey(new Date())}.${ext}`;
+$('#csvBtn').addEventListener('click', () => {
+  if (!D.filtered.length) { toast('ไม่มีข้อมูลให้ Export ในตัวกรองนี้', 'err'); return; }
+  const { head, rows } = exportRows();
+  const q = v => { const s = String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; };
+  const csv = '\ufeff' + [head, ...rows].map(r => r.map((v,i) => i === head.indexOf(LABELS.phone) && v ? q('="' + v + '"') : q(v)).join(',')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv;charset=utf-8' })); a.download = fname('csv'); a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+});
+$('#xlsxBtn').addEventListener('click', async () => {
+  if (!D.filtered.length) { toast('ไม่มีข้อมูลให้ Export ในตัวกรองนี้', 'err'); return; }
+  try { await loadScript(LIBS.xlsx); } catch(e) { toast('โหลดตัวสร้างไฟล์ Excel ไม่ได้ — ลองใช้ Export CSV', 'err'); return; }
+  const { head, rows } = exportRows();
+  const ws = XLSX.utils.aoa_to_sheet([head, ...rows]);
+  const pi = head.indexOf(LABELS.phone);
+  rows.forEach((r, i) => { const ref = XLSX.utils.encode_cell({ r: i+1, c: pi }); if (ws[ref]) { ws[ref].t = 's'; ws[ref].z = '@'; } });
+  ws['!cols'] = head.map(h => ({ wch: Math.max(10, Math.min(30, h.length + 4)) }));
+  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Leads');
+  XLSX.writeFile(wb, fname('xlsx'));
+});
+
+/* ---------- INIT ---------- */
+showConnBanner();
+openDashboard().catch(() => toast('โหลดแดชบอร์ดไม่สำเร็จ — ตรวจสัญญาณอินเทอร์เน็ต', 'err'));
+</script>
+</body>
+</html>
