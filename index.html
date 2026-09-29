@@ -586,6 +586,7 @@ $('#submitBtn').addEventListener('click', async () => {
   const btn = $('#submitBtn'); btn.disabled = true; btn.textContent = 'กำลังบันทึก…';
   try {
     const r = await apiPost({ action:'submit', mode, lead:d });
+    if (r.ok && !r.id) throw new Error('bad_response'); // Google ตอบกลับผิดรูปแบบ = ไม่แน่ใจว่าบันทึกแล้ว → เก็บคิวส่งใหม่ (มีรหัสการส่งกันซ้ำ)
     if (r.ok) { toast(r.updated ? `อัปเดต Lead เดิมแล้ว (เข้าพบครั้งที่ ${r.visitCount})` : 'บันทึกการเข้าพบแล้ว', 'ok'); clearForm(); window.scrollTo({top:0, behavior:'smooth'}); }
     else if (r.duplicate) { showDup(Object.assign({phone:d.phone}, r.lead)); $('#dupBox').scrollIntoView({behavior:'smooth', block:'center'}); }
     else if (r.error === 'bad_sales') { toast(r.message, 'err'); lsSet(LS.sales, null); renderSales(); }
@@ -639,6 +640,7 @@ async function flushQueue(manual){
     if (it.dup) continue;
     try {
       const r = await apiPost({ action:'submit', mode: it.mode, lead: it.lead });
+      if (r.ok && !r.id) break; // ตอบกลับผิดรูปแบบ ลองใหม่รอบหน้า
       if (r.ok) { setQueue(getQueue().filter(x => x.qid !== it.qid)); sent++; }
       else if (r.duplicate) { setQueue(getQueue().map(x => x.qid === it.qid ? { ...x, dup:true, dupLead:r.lead } : x)); }
       else { setQueue(getQueue().map(x => x.qid === it.qid ? { ...x, dup:false, err:r.message } : x)); if (manual) toast('ส่งไม่สำเร็จ: ' + (r.message || ''), 'err'); }
