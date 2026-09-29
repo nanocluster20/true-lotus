@@ -327,7 +327,7 @@ const LABELS = {
   district:'อำเภอ', districtOther:'อำเภอ (อื่นๆ)',
   lat:'ละติจูด', lng:'ลองจิจูด', gpsAccuracy:'ความแม่นยำ GPS (ม.)', nearestBranch:"สาขา Lotus's ใกล้สุด", nearestBranchDist:'ระยะถึงสาขา (กม.)', note:'บันทึกเพิ่มเติม'
 };
-const LS = { sales:'txl_sales', salesName:'txl_sales_name', key:'txl_key', queue:'txl_queue', api:'txl_api' };
+const LS = { sales:'txl_sales', salesName:'txl_sales_name', key:'txl_key', queue:'txl_queue', api:'txl_api', cache:'txl_cache' };
 
 /* ---------- utilities ---------- */
 const $ = s => document.querySelector(s);
@@ -353,8 +353,8 @@ const qp = new URLSearchParams(location.search);
 if (qp.get('api')) lsSet(LS.api, qp.get('api'));
 const API = (SCRIPT_URL || lsGet(LS.api, '') || '').trim();
 
-// เลิกรอหลัง 20 วินาที กันหน้าจอค้าง (เช่น ปุ่มตรวจการเชื่อมต่อค้างที่ "กำลังตรวจ…")
-const API_TIMEOUT_MS = 20000;
+// เลิกรอหลัง 60 วินาที กันหน้าจอค้าง (เช่น ปุ่มตรวจการเชื่อมต่อค้างที่ "กำลังตรวจ…")
+const API_TIMEOUT_MS = 60000; // Google Apps Script บางครั้งตอบช้าเกือบ 20 วินาที จึงรอได้ถึง 1 นาที
 async function fetchJson(url, opts){
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), API_TIMEOUT_MS);
@@ -430,6 +430,8 @@ async function openDashboard(){
   const key = lsGet(LS.key, '');
   if (!key) { show('#gate', true); show('#dash', false); $('#keyInp').focus(); return; }
   show('#gate', false); show('#dash', true);
+  const c = readCache();
+  if (c) { D.loadedAt = new Date(c.t); renderData(c.leads, c.names, c.branches); setMeta(`แสดงข้อมูลเมื่อ ${hhmm(D.loadedAt)} น. · กำลังดึงข้อมูลล่าสุด…`); }
   await fetchData();
 }
 $('#keyBtn').addEventListener('click', async () => {
@@ -437,7 +439,7 @@ $('#keyBtn').addEventListener('click', async () => {
   lsSet(LS.key, k); $('#keyErr').classList.add('hidden'); await openDashboard();
 });
 $('#keyInp').addEventListener('keydown', e => { if (e.key === 'Enter') $('#keyBtn').click(); });
-$('#logoutBtn').addEventListener('click', () => { lsSet(LS.key, null); $('#keyInp').value = ''; show('#dash', false); show('#gate', true); });
+$('#logoutBtn').addEventListener('click', () => { lsSet(LS.key, null); lsSet(LS.cache, null); D.leads = []; D.loadedAt = null; $('#keyInp').value = ''; show('#dash', false); show('#gate', true); });
 
 let libsPromise = null;
 function ensureLibs(){
@@ -456,26 +458,43 @@ function showLibFail(){
   $$('.chartbox').forEach(b => { if (!b.querySelector('.libmsg')) b.insertAdjacentHTML('beforeend', `<div class="libmsg">${msg}</div>`); });
 }
 
-async function fetchData(){
-  $('#dMeta').textContent = 'กำลังโหลดข้อมูล…';
-  let r;
-  try {
-    if (!CFG.loaded) await loadConfig();
-    r = await apiGet({ action:'list', key: lsGet(LS.key, '') });
-  } catch(e) {
-    $('#dMeta').textContent = 'โหลดข้อมูลไม่สำเร็จ — ดูผลตรวจการเชื่อมต่อด้านล่าง';
-    runDiag(); return;
-  }
-  if (!r.ok) {
-    if (r.error === 'bad_key') { lsSet(LS.key, null); show('#dash', false); show('#gate', true); $('#keyErr').textContent = 'รหัสผู้ดูแลไม่ถูกต้อง — ดูรหัสได้ที่ชีต Settings ช่อง DASHBOARD_KEY'; $('#keyErr').classList.remove('hidden'); return; }
-    $('#dMeta').textContent = 'หลังบ้านแจ้งข้อผิดพลาด — ดูผลตรวจการเชื่อมต่อด้านล่าง';
-    runDiag(); return;
-  }
-  D.leads = r.leads || []; D.names = r.salesNames || {}; D.loadedAt = new Date();
-  if (D.leads.length) show('#diag', false); else runDiag();
+/* ข้อมูลชุดล่าสุดที่โหลดสำเร็จ เก็บไว้ในเบราว์เซอร์นี้ เปิดหน้ามาแสดงได้ทันที (ลบเมื่อกดออกจากระบบ) */
+function readCache(){ try { const c = JSON.parse(lsGet(LS.cache, 'null')); return c && Array.isArray(c.leads) ? c : null; } catch(e){ return null; } }
+function writeCache(r){ lsSet(LS.cache, JSON.stringify({ t: new Date().toISOString(), leads: r.leads || [], names: r.salesNames || {}, branches: r.branches || CFG.branches || [] })); }
+const hhmm = d => d.toLocaleString('th-TH', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+function setMeta(t){ $('#dMeta').textContent = t; }
+
+function renderData(leads, names, branches){
+  D.leads = leads || []; D.names = names || {};
+  if (Array.isArray(branches)) CFG = { branches, hasSalesList: CFG.hasSalesList, loaded: true };
   fillFilterLists();
   applyFilters();
   ensureLibs().then(() => { drawBranches(); renderVisual(); }).catch(() => showLibFail());
+}
+
+async function fetchData(){
+  if (D.fetching) return; D.fetching = true;
+  const hasShown = !!D.loadedAt;
+  setMeta(hasShown ? `แสดงข้อมูลเมื่อ ${hhmm(D.loadedAt)} น. · กำลังดึงข้อมูลล่าสุด…` : 'กำลังโหลดข้อมูล… (Google อาจใช้เวลาถึง 1 นาที)');
+  let r = null, err = null;
+  for (let attempt = 1; attempt <= 2 && !r; attempt++) {
+    try { r = await apiGet({ action:'list', key: lsGet(LS.key, '') }); }
+    catch(e) { err = e; if (attempt === 1) setMeta((hasShown ? `แสดงข้อมูลเมื่อ ${hhmm(D.loadedAt)} น. · ` : '') + 'Google ตอบช้า กำลังลองอีกครั้ง…'); }
+  }
+  D.fetching = false;
+  if (!r) {
+    if (hasShown) { setMeta(`แสดงข้อมูลชุดล่าสุดเมื่อ ${hhmm(D.loadedAt)} น. — ดึงข้อมูลใหม่ไม่สำเร็จ กด "รีเฟรชข้อมูล" เพื่อลองอีกครั้ง`); return; }
+    setMeta('โหลดข้อมูลไม่สำเร็จ — ดูผลตรวจการเชื่อมต่อด้านล่าง'); runDiag(); return;
+  }
+  if (!r.ok) {
+    if (r.error === 'bad_key') { lsSet(LS.key, null); lsSet(LS.cache, null); show('#dash', false); show('#gate', true); $('#keyErr').textContent = 'รหัสผู้ดูแลไม่ถูกต้อง — ดูรหัสได้ที่ชีต Settings ช่อง DASHBOARD_KEY'; $('#keyErr').classList.remove('hidden'); return; }
+    setMeta('หลังบ้านแจ้งข้อผิดพลาด — ดูผลตรวจการเชื่อมต่อด้านล่าง'); runDiag(); return;
+  }
+  if (!Array.isArray(r.branches) && !CFG.loaded) await loadConfig(); // หลังบ้านรุ่นเก่ายังไม่ส่งสาขามาพร้อมกัน
+  D.loadedAt = new Date();
+  renderData(r.leads, r.salesNames, Array.isArray(r.branches) ? r.branches : CFG.branches);
+  writeCache(r);
+  if (D.leads.length) show('#diag', false); else runDiag();
 }
 
 /* ตรวจการเชื่อมต่อทีละขั้น */

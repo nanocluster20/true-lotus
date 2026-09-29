@@ -321,7 +321,7 @@ const LABELS = {
   channels:'ช่องทางสั่งซื้อเดิม', channelApp:'แอปฯ ออนไลน์ที่ใช้', channelOther:'ช่องทางอื่นๆ', district:'อำเภอ', districtOther:'อำเภอ (อื่นๆ)',
   lat:'ละติจูด', lng:'ลองจิจูด', gpsAccuracy:'ความแม่นยำ GPS (ม.)', nearestBranch:"สาขา Lotus's ใกล้สุด", nearestBranchDist:'ระยะถึงสาขา (กม.)', note:'บันทึกเพิ่มเติม'
 };
-const LS = { sales:'txl_sales', salesName:'txl_sales_name', key:'txl_key', queue:'txl_queue', api:'txl_api' };
+const LS = { sales:'txl_sales', salesName:'txl_sales_name', key:'txl_key', queue:'txl_queue', api:'txl_api', cfg:'txl_cfg' };
 
 /* ---------- utilities ---------- */
 const $ = s => document.querySelector(s);
@@ -362,8 +362,10 @@ async function apiPost(body){
 }
 
 let CFG = { branches: [], hasSalesList: false, loaded: false };
+// รายชื่อสาขาที่เคยโหลดสำเร็จ เก็บไว้ในเครื่อง ใช้หาสาขาใกล้สุดได้ทันทีแม้ Google ตอบช้า/สัญญาณไม่ดี
+try { const c = JSON.parse(lsGet(LS.cfg, 'null')); if (c && Array.isArray(c.branches)) CFG = { branches: c.branches, hasSalesList: !!c.hasSalesList, loaded: false }; } catch(e) {}
 async function loadConfig(){
-  try { const c = await apiGet({action:'config'}); if (c.ok) CFG = { branches: c.branches || [], hasSalesList: !!c.hasSalesList, loaded: true }; }
+  try { const c = await apiGet({action:'config'}); if (c.ok) { CFG = { branches: c.branches || [], hasSalesList: !!c.hasSalesList, loaded: true }; lsSet(LS.cfg, JSON.stringify({ branches: CFG.branches, hasSalesList: CFG.hasSalesList })); } }
   catch(e){ /* ใช้งานต่อได้ ถ้าเน็ตหลุดจะเก็บคิวไว้ */ }
 }
 
