@@ -8,7 +8,7 @@
 <title>True × Lotus's — แดชบอร์ดผู้ดูแล</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --true:#E1251B; --true-ink:#A8170F; --true-wash:#FDECEA;
@@ -16,8 +16,8 @@
   --ok:#1E9E4A; --wait:#E8A600; --no:#D93025; --muted-mk:#8A9199;
   --bg:#F2F4F3; --panel:#FFFFFF; --ink:#1D2125; --ink2:#59616A; --line:#DDE2E0; --line2:#EDF0EF;
   --focus:#1A73E8;
-  --font:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --font:"Kanit",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
+  --mono:"Kanit",system-ui,sans-serif;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
@@ -26,7 +26,7 @@ html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--font);-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-variant-numeric:tabular-nums}
 .hidden{display:none!important}
 
 /* ---------- masthead ---------- */
@@ -291,11 +291,8 @@ a.tel{color:var(--true-ink);font-family:var(--mono);text-decoration:none;font-we
 
     <div class="brks" style="margin-top:12px">
       <section class="card"><h2>ประเภทร้านค้า</h2><div class="chartbox"><canvas id="cType"></canvas></div></section>
-      <section class="card"><h2>ช่องทางเดิมของร้านที่ไม่สนใจโลตัส</h2><div class="chartbox"><canvas id="cChan"></canvas></div></section>
-      <section class="card"><h2>สินค้าโลตัสที่สนใจ</h2><div class="chartbox"><canvas id="cInt"></canvas></div></section>
       <section class="card"><h2>เหตุผลที่ปิดเน็ตทรูไม่ได้</h2><div class="chartbox"><canvas id="cNetWhy"></canvas></div></section>
       <section class="card"><h2>ค่ายที่ลูกค้าใช้อยู่</h2><div class="chartbox"><canvas id="cProv"></canvas></div></section>
-      <section class="card"><h2>เหตุผลที่ปิดโลตัสไม่ได้</h2><div class="chartbox"><canvas id="cLotusWhy"></canvas></div></section>
     </div>
   </div>
 </main>
@@ -324,10 +321,10 @@ const OPT = {
 const DIST6 = OPT.district.slice(0,6);
 const LABELS = {
   id:'รหัส Lead', createdAt:'บันทึกครั้งแรก', updatedAt:'อัปเดตล่าสุด', visitCount:'จำนวนครั้งที่เข้าพบ', salesCode:'รหัสเซลล์ (ล่าสุด)', firstSalesCode:'รหัสเซลล์ (ครั้งแรก)',
-  custName:'ชื่อลูกค้า', phone:'เบอร์โทร', shopName:'ชื่อร้านค้า', shopType:'ประเภทร้านค้า', shopTypeOther:'ประเภทร้าน (อื่นๆ)', lotusInterest:'สินค้าโลตัสที่สนใจ',
+  custName:'ชื่อลูกค้า', phone:'เบอร์โทร', shopName:'ชื่อร้านค้า', shopType:'ประเภทร้านค้า', shopTypeOther:'ประเภทร้าน (อื่นๆ)', 
   netResult:'ผลเสนอเน็ตทรู', netReason:'เหตุผลไม่สนใจเน็ตทรู', netProvider:'ค่ายที่ใช้อยู่', netProviderOther:'ค่ายที่ใช้อยู่ (อื่นๆ)', netWhy:'ทำไมไม่ย้ายมาทรู', contractEnd:'สัญญาหมดเมื่อ', netWhyOther:'เหตุผลไม่ย้าย (อื่นๆ)',
-  netClosedAt:'วันที่ปิดเน็ตทรูได้', installDate:'วันนัดติดตั้งเน็ตทรู', installStatus:'สถานะติดตั้ง', installedAt:'วันที่ยืนยันติดตั้ง', callbackTime:'เวลาโทรกลับ (เน็ตทรู)', lotusResult:'ผลเสนอสินค้าโลตัส', lotusCallbackTime:'เวลาโทรกลับ (โลตัส)', lotusWhy:'เหตุผลไม่สนใจโลตัส', lotusOrderedAt:'วันที่สั่งโลตัส',
-  channels:'ช่องทางสั่งซื้อเดิม', channelApp:'แอปฯ ออนไลน์ที่ใช้', channelOther:'ช่องทางอื่นๆ', district:'อำเภอ', districtOther:'อำเภอ (อื่นๆ)',
+  netClosedAt:'วันที่ปิดเน็ตทรูได้', installDate:'วันนัดติดตั้งเน็ตทรู', installStatus:'สถานะติดตั้ง', installedAt:'วันที่ยืนยันติดตั้ง', callbackTime:'เวลาโทรกลับ (เน็ตทรู)', lotusResult:'ผลเสนอสินค้าโลตัส', lotusCallbackTime:'เวลาโทรกลับ (โลตัส)', lotusOrderedAt:'วันที่สั่งโลตัส',
+  district:'อำเภอ', districtOther:'อำเภอ (อื่นๆ)',
   lat:'ละติจูด', lng:'ลองจิจูด', gpsAccuracy:'ความแม่นยำ GPS (ม.)', nearestBranch:"สาขา Lotus's ใกล้สุด", nearestBranchDist:'ระยะถึงสาขา (กม.)', note:'บันทึกเพิ่มเติม'
 };
 const LS = { sales:'txl_sales', salesName:'txl_sales_name', key:'txl_key', queue:'txl_queue', api:'txl_api' };
@@ -589,8 +586,6 @@ function renderDecide(L, S){
   }
   const why = topOf(countBy(L.filter(l => l.netResult === 'ไม่สนใจ'), l => l.netReason === 'ใช้ค่ายอื่นอยู่' ? (l.netWhy||[]) : l.netReason));
   if (why) out.push(`เหตุผลหลักที่ปิดเน็ตทรูไม่ได้คือ "${esc(why[0])}" (${why[1]} ร้าน)`);
-  const lw = topOf(countBy(L.filter(l => l.lotusResult === 'ไม่สนใจ'), l => l.lotusWhy));
-  if (lw) out.push(`เหตุผลหลักที่ร้านไม่สั่งโลตัสคือ "${esc(lw[0])}" (${lw[1]} ร้าน)`);
   const noGps = L.filter(l => l.lat === null || l.lat === '').length;
   if (noGps) out.push(`<b>${noGps}</b> ร้านไม่มีพิกัด จึงไม่แสดงบนแผนที่ — ย้ำให้เซลล์กดปักหมุดหน้าร้าน`);
   if (!out.length) out.push('ยังไม่พบประเด็นที่ต้องเร่งจัดการในช่วงที่เลือก');
@@ -662,11 +657,8 @@ function barBreak(id, map, color, emptyMsg){
 }
 function renderBreakdowns(L){
   barBreak('cType', countBy(L, l => l.shopType === 'อื่นๆ' && l.shopTypeOther ? 'อื่นๆ: ' + l.shopTypeOther : l.shopType), '#59616A');
-  barBreak('cChan', countBy(L, l => (l.channels||[]).map(c => c === 'แอปฯ ออนไลน์' && l.channelApp ? 'แอปฯ: ' + l.channelApp : c === 'อื่นๆ' && l.channelOther ? 'อื่นๆ: ' + l.channelOther : c)), '#7C8791');
-  barBreak('cInt', countBy(L, l => l.lotusInterest), COL.lotus);
   barBreak('cNetWhy', countBy(L.filter(l => l.netResult === 'ไม่สนใจ'), l => l.netReason === 'ใช้ค่ายอื่นอยู่' ? (l.netWhy||[]).map(w => w === 'อื่นๆ' && l.netWhyOther ? 'อื่นๆ: ' + l.netWhyOther : w) : l.netReason), COL.true, 'ยังไม่มีร้านที่ไม่สนใจเน็ตทรู');
   barBreak('cProv', countBy(L.filter(l => l.netProvider), l => l.netProvider === 'อื่นๆ' && l.netProviderOther ? l.netProviderOther : l.netProvider), '#A8170F', 'ยังไม่มีข้อมูลค่ายที่ใช้อยู่');
-  barBreak('cLotusWhy', countBy(L.filter(l => l.lotusResult === 'ไม่สนใจ'), l => l.lotusWhy), COL.lotus, 'ยังไม่มีร้านที่ไม่สนใจโลตัส');
 }
 
 /* leaderboard */
@@ -757,9 +749,10 @@ function renderTrend(L){
 /* map */
 function initMap(){
   const m = L.map('map', { preferCanvas:true, zoomControl:true, minZoom:5, maxBounds:[[4.5,96.5],[21.5,106.5]], maxBoundsViscosity:.8 }).setView([13.6, 100.65], 11);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', { subdomains:'abcd', maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>' }).addTo(m);
+  // แผนที่พื้นหลัง Esri Light Gray (ไม่ต้องใช้ API key — CARTO เปลี่ยนเป็นต้องใช้ key แล้ว)
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom:16, maxZoom:19, attribution:'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors' }).addTo(m);
   m.createPane('labels'); m.getPane('labels').style.zIndex = 300; m.getPane('labels').style.pointerEvents = 'none';
-  D.labelLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', { subdomains:'abcd', maxZoom:19, pane:'labels' });
+  D.labelLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom:16, maxZoom:19, pane:'labels' });
   D.renderer = L.canvas({ padding:.5, tolerance:6 });
   D.visitLayer = L.layerGroup().addTo(m);
   D.branchLayer = L.layerGroup().addTo(m);
@@ -812,8 +805,7 @@ function renderMap(Ls){
       <div>${esc(l.shopType === 'อื่นๆ' ? l.shopTypeOther || 'อื่นๆ' : l.shopType)} · ${esc(l.district === 'อื่นๆ' ? l.districtOther || 'อื่นๆ' : l.district)}</div>
       ${instInfo(l) ? `<div>ติดตั้ง: <b>${esc(instInfo(l).t)}</b>${l.installDate ? ' (นัด ' + esc(l.installDate) + ')' : ''}</div>` : ''}
       <div>เน็ตทรู: <b>${esc(l.netResult)}</b>${l.netReason ? ' — ' + esc(l.netReason) : ''}${l.netProvider ? ' (' + esc(l.netProvider === 'อื่นๆ' ? l.netProviderOther : l.netProvider) + ')' : ''}${(l.netWhy||[]).length ? '<br>เหตุผล: ' + esc(l.netWhy.join(', ')) : ''}${l.contractEnd ? '<br>สัญญาหมด: ' + esc(l.contractEnd) : ''}</div>
-      <div>โลตัส: <b>${esc(l.lotusResult)}</b>${(l.lotusWhy||[]).length ? ' — ' + esc(l.lotusWhy.join(', ')) : ''}</div>
-      ${(l.lotusInterest||[]).length ? `<div>สนใจ: ${esc(l.lotusInterest.join(', '))}</div>` : ''}
+      <div>โลตัส: <b>${esc(l.lotusResult)}</b></div>
       ${l.nearestBranch ? `<div>สาขาใกล้สุด: ${esc(l.nearestBranch)}${l.nearestBranchDist !== null ? ` (${Number(l.nearestBranchDist).toFixed(2)} กม.)` : ''}</div>` : ''}
       <div class="hint">เซลล์ ${esc(l.salesCode)} · ${esc(thDate(l.updatedAt || l.createdAt))} · เข้าพบ ${esc(l.visitCount || 1)} ครั้ง</div>
       ${l.note ? `<div>บันทึก: ${esc(l.note)}</div>` : ''}</div>`, { maxWidth: 300 });

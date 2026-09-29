@@ -7,7 +7,7 @@
 <title>True × Lotus's — บันทึกการเข้าพบร้านค้า</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --true:#E1251B; --true-ink:#A8170F; --true-wash:#FDECEA;
@@ -15,8 +15,8 @@
   --ok:#1E9E4A; --wait:#E8A600; --no:#D93025; --muted-mk:#8A9199;
   --bg:#F2F4F3; --panel:#FFFFFF; --ink:#1D2125; --ink2:#59616A; --line:#DDE2E0; --line2:#EDF0EF;
   --focus:#1A73E8;
-  --font:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --font:"Kanit",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
+  --mono:"Kanit",system-ui,sans-serif;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
@@ -25,7 +25,7 @@ html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--font);-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-variant-numeric:tabular-nums}
 .hidden{display:none!important}
 
 /* ---------- masthead ---------- */
@@ -215,7 +215,7 @@ a.tel{color:var(--true-ink);font-family:var(--mono);text-decoration:none;font-we
       <div id="salesEdit">
         <label for="salesCode" class="req">รหัสเซลล์ (Sales Code)</label>
         <div class="salesbox">
-          <input id="salesCode" class="inp" autocomplete="off" autocapitalize="characters" placeholder="เช่น SP001">
+          <input id="salesCode" class="inp num" autocomplete="off" inputmode="numeric" maxlength="8" placeholder="เช่น 39XXXXXX">
           <button class="btn sm" id="salesConfirm" type="button">ยืนยันรหัส</button>
         </div>
       </div>
@@ -243,10 +243,6 @@ a.tel{color:var(--true-ink);font-family:var(--mono);text-decoration:none;font-we
     </div>
   </section>
 
-  <section class="sec l">
-    <h2>สินค้าโลตัสที่สนใจ <span class="tag">เลือกได้หลายข้อ</span></h2>
-    <div class="fld" data-f="lotusInterest"><div class="opt multi" data-multi="lotusInterest"></div></div>
-  </section>
 
   <section class="sec t">
     <h2>อินเทอร์เน็ตบ้านทรู <span class="tag">ทรูออนไลน์</span></h2>
@@ -276,13 +272,6 @@ a.tel{color:var(--true-ink);font-family:var(--mono);text-decoration:none;font-we
     <div class="fld" data-f="lotusResult"><div class="lbl req">ผลการเสนอ</div><div class="opt col" data-one="lotusResult"></div><div class="errmsg">เลือกผลการเสนอสินค้าโลตัส</div></div>
     <div class="sub hidden" id="wLotusCallback">
       <div class="fld" data-f="lotusCallbackTime"><div class="lbl req">เวลาที่สะดวกให้โทรกลับ (โลตัส)</div><div class="opt" data-one="lotusCallbackTime"></div><div class="errmsg">เลือกเวลาที่สะดวก</div></div>
-    </div>
-    <div class="sub hidden" id="wLotusWhy">
-      <div class="fld" data-f="lotusWhy"><div class="lbl req">เหตุผลที่ปิดการขายไม่ได้ (เลือกได้หลายข้อ)</div><div class="opt multi col" data-multi="lotusWhy"></div><div class="errmsg">เลือกอย่างน้อย 1 ข้อ</div></div>
-      <div class="fld" data-f="channels"><div class="lbl">ปกติสั่งสินค้าจากช่องทางไหน (เลือกได้หลายข้อ)</div><div class="opt multi" data-multi="channels"></div>
-        <div class="fld hidden" id="wChanApp" data-f="channelApp"><input id="channelApp" class="inp" placeholder="ระบุแอปฯ ออนไลน์"><div class="errmsg">ระบุชื่อแอปฯ</div></div>
-        <div class="fld hidden" id="wChanOther" data-f="channelOther"><input id="channelOther" class="inp" placeholder="ระบุช่องทางอื่น"><div class="errmsg">ระบุช่องทาง</div></div>
-      </div>
     </div>
   </section>
 
@@ -432,11 +421,6 @@ function updateVisibility(){
   const lotusWait = one.lotusResult === 'สนใจรอติดตาม';
   show('#wLotusCallback', lotusWait);
   if (!lotusWait) one.lotusCallbackTime = '';
-  const lotusNo = one.lotusResult === 'ไม่สนใจ';
-  show('#wLotusWhy', lotusNo);
-  if (!lotusNo) { multi.lotusWhy.clear(); multi.channels.clear(); }
-  show('#wChanApp', lotusNo && multi.channels.has('แอปฯ ออนไลน์'));
-  show('#wChanOther', lotusNo && multi.channels.has('อื่นๆ'));
   show('#wDistOther', $('#district').value === 'อื่นๆ');
   syncButtons();
 }
@@ -450,8 +434,8 @@ function renderSales(){
   $('#salesShowCode').textContent = code; $('#salesShowName').textContent = lsGet(LS.salesName, '');
 }
 $('#salesConfirm').addEventListener('click', async () => {
-  const code = $('#salesCode').value.trim().toUpperCase();
-  if (!code) { $('#salesCode').closest('.fld').classList.add('bad'); return; }
+  const code = $('#salesCode').value.replace(/\D/g, '');
+  if (!/^39\d{6}$/.test(code)) { $('#salesCode').closest('.fld').classList.add('bad'); toast('รหัสเซลล์ต้องเป็นตัวเลข 8 หลัก ขึ้นต้นด้วย 39', 'err'); return; }
   const btn = $('#salesConfirm'); btn.disabled = true;
   let name = '';
   try {
@@ -486,7 +470,7 @@ function resetDup(){ F.mode = 'new'; hideDup(); }
 function showDup(lead){
   F.dupLead = lead; F.mode = 'pending';
   const b = $('#dupBox'); b.className = 'dup';
-  b.innerHTML = `<b>เบอร์นี้เคยบันทึกแล้ว</b><div>ร้าน ${esc(lead.shopHint || '')}${lead.shopType ? ' (' + esc(lead.shopType) + ')' : ''} · ${esc(lead.district || '')}<br>เข้าพบล่าสุด ${esc(thDate(lead.updatedAt || lead.createdAt))} · เข้าพบแล้ว ${esc(lead.visitCount || 1)} ครั้ง</div>
+  b.innerHTML = `<b>เบอร์นี้เคยบันทึกแล้ว</b><div>${esc(lead.shopHint || '')}${lead.shopType ? ' (' + esc(lead.shopType) + ')' : ''} · ${esc(lead.district || '')}<br>เข้าพบล่าสุด ${esc(thDate(lead.updatedAt || lead.createdAt))} · เข้าพบแล้ว ${esc(lead.visitCount || 1)} ครั้ง</div>
   <div class="acts"><button type="button" class="btn lotus sm" id="dupUpd">อัปเดต Lead เดิม</button><button type="button" class="btn ghost sm" id="dupCancel">ยกเลิกและล้างฟอร์ม</button></div>`;
   $('#dupUpd').onclick = () => {
     F.mode = 'update';
@@ -498,7 +482,7 @@ function showDup(lead){
     if (!$('#district').value && OPT.district.includes(lead.district)) $('#district').value = lead.district;
     updateVisibility();
     b.className = 'dup upd';
-    b.innerHTML = `<b>กำลังอัปเดต Lead เดิม</b> — ร้าน ${esc(lead.shopHint || '')} (เข้าพบครั้งที่ ${(Number(lead.visitCount)||1)+1}) กรอกผลการเข้าพบครั้งนี้แล้วกดบันทึก ชื่อลูกค้าและชื่อร้านเว้นว่างได้<div class="acts"><button type="button" class="btn ghost sm" id="dupUndo">ยกเลิกการอัปเดต</button></div>`;
+    b.innerHTML = `<b>กำลังอัปเดต Lead เดิม</b> — ${esc(lead.shopHint || '')} (เข้าพบครั้งที่ ${(Number(lead.visitCount)||1)+1}) กรอกผลการเข้าพบครั้งนี้แล้วกดบันทึก ชื่อลูกค้าและชื่อร้านเว้นว่างได้<div class="acts"><button type="button" class="btn ghost sm" id="dupUndo">ยกเลิกการอัปเดต</button></div>`;
     $('#dupUndo').onclick = () => { clearForm(); toast('ล้างฟอร์มแล้ว'); };
   };
   $('#dupCancel').onclick = () => { clearForm(); toast('ล้างฟอร์มแล้ว'); };
@@ -550,18 +534,18 @@ function collect(){
     salesCode: lsGet(LS.sales, ''),
     custName: $('#custName').value.trim(), phone: $('#phone').value.trim(), shopName: $('#shopName').value.trim(),
     shopType: $('#shopType').value, shopTypeOther: visible($('#wShopOther')) ? $('#shopTypeOther').value.trim() : '',
-    lotusInterest: [...multi.lotusInterest],
+    lotusInterest: [], // ตัดคำถามนี้ออกแล้ว
     netResult: one.netResult, installDate: visible($('#wInstall')) ? $('#installDate').value : '',
     netReason: one.netReason, netProvider: one.netProvider,
     netProviderOther: visible($('#wProvOther')) ? $('#netProviderOther').value.trim() : '',
     netWhy: [...multi.netWhy], contractEnd: visible($('#wContract')) ? $('#contractEnd').value : '',
     netWhyOther: visible($('#wWhyOther')) ? $('#netWhyOther').value.trim() : '',
-    callbackTime: one.callbackTime, lotusResult: one.lotusResult, lotusCallbackTime: one.lotusCallbackTime, lotusWhy: [...multi.lotusWhy],
-    channels: [...multi.channels], channelApp: visible($('#wChanApp')) ? $('#channelApp').value.trim() : '',
-    channelOther: visible($('#wChanOther')) ? $('#channelOther').value.trim() : '',
+    callbackTime: one.callbackTime, lotusResult: one.lotusResult, lotusCallbackTime: one.lotusCallbackTime,
+    lotusWhy: [], channels: [], channelApp: '', channelOther: '', // โลตัส "ไม่สนใจ" ติ๊กแล้วจบ ไม่ถามต่อ
     district: $('#district').value, districtOther: visible($('#wDistOther')) ? $('#districtOther').value.trim() : '',
     lat: F.lat ?? '', lng: F.lng ?? '', gpsAccuracy: F.acc ?? '', nearestBranch: F.branch, nearestBranchDist: F.branchDist ?? '',
-    note: $('#note').value.trim(), clientTime: new Date().toISOString()
+    note: $('#note').value.trim(), clientTime: new Date().toISOString(),
+    subId: Date.now().toString(36) + Math.random().toString(36).slice(2, 10) // รหัสประจำการกดบันทึก กันบันทึกซ้ำเมื่อส่งใหม่
   };
 }
 function validate(d){
@@ -587,9 +571,6 @@ function validate(d){
   }
   if (!d.lotusResult) mark('lotusResult');
   if (d.lotusResult === 'สนใจรอติดตาม' && !d.lotusCallbackTime) mark('lotusCallbackTime');
-  if (d.lotusResult === 'ไม่สนใจ' && !d.lotusWhy.length) mark('lotusWhy');
-  if (d.channels.includes('แอปฯ ออนไลน์') && !d.channelApp) mark('channelApp');
-  if (d.channels.includes('อื่นๆ') && !d.channelOther) mark('channelOther');
   if (!d.district) mark('district'); else if (d.district === 'อื่นๆ' && !d.districtOther) mark('districtOther');
   return bad;
 }
@@ -615,7 +596,7 @@ $('#submitBtn').addEventListener('click', async () => {
 });
 
 function clearForm(){
-  ['custName','phone','shopName','shopTypeOther','installDate','netProviderOther','contractEnd','netWhyOther','channelApp','channelOther','districtOther','note'].forEach(id => $('#'+id).value = '');
+  ['custName','phone','shopName','shopTypeOther','installDate','netProviderOther','contractEnd','netWhyOther','districtOther','note'].forEach(id => $('#'+id).value = '');
   $('#shopType').value = ''; $('#district').value = '';
   Object.keys(one).forEach(k => one[k] = ''); Object.values(multi).forEach(s => s.clear());
   Object.assign(F, { mode:'new', dupLead:null, lat:null, lng:null, acc:null, branch:'', branchDist:null });
@@ -624,11 +605,10 @@ function clearForm(){
 }
 function loadIntoForm(d){
   clearForm();
-  ['custName','phone','shopName','shopTypeOther','installDate','netProviderOther','contractEnd','netWhyOther','channelApp','channelOther','districtOther','note'].forEach(id => $('#'+id).value = d[id] || '');
+  ['custName','phone','shopName','shopTypeOther','installDate','netProviderOther','contractEnd','netWhyOther','districtOther','note'].forEach(id => $('#'+id).value = d[id] || '');
   $('#shopType').value = d.shopType || ''; $('#district').value = d.district || '';
   ['netResult','netReason','netProvider','callbackTime','lotusResult','lotusCallbackTime'].forEach(k => one[k] = d[k] || '');
-  ['lotusInterest','lotusWhy','channels'].forEach(k => multi[k] = new Set(d[k] || []));
-  updateVisibility(); // เปิดส่วนที่ซ่อนก่อน แล้วค่อยใส่ค่าที่ขึ้นกับส่วนนั้น
+    updateVisibility(); // เปิดส่วนที่ซ่อนก่อน แล้วค่อยใส่ค่าที่ขึ้นกับส่วนนั้น
   multi.netWhy = new Set(d.netWhy || []); updateVisibility();
   if (d.lat !== '' && d.lat !== null) Object.assign(F, { lat:d.lat, lng:d.lng, acc:d.gpsAccuracy, branch:d.nearestBranch || '', branchDist: d.nearestBranchDist === '' ? null : d.nearestBranchDist });
   renderGps();
