@@ -437,7 +437,7 @@ const salesLabel = c => D.names[c] ? `${c} · ${D.names[c]}` : c;
 
 async function openDashboard(){
   const key = lsGet(LS.key, '');
-  if (!key) { show('#gate', true); show('#dash', false); $('#keyInp').focus(); return; }
+  if (!key) { lsSet(LS.cache, null); show('#gate', true); show('#dash', false); $('#keyInp').focus(); return; }
   show('#gate', false); show('#dash', true);
   const c = readCache();
   if (c) { D.loadedAt = new Date(c.t); renderData(c.leads, c.names, c.branches); setMeta(`แสดงข้อมูลเมื่อ ${hhmm(D.loadedAt)} น. · กำลังดึงข้อมูลล่าสุด…`); }
@@ -468,8 +468,10 @@ function showLibFail(){
 }
 
 /* ข้อมูลชุดล่าสุดที่โหลดสำเร็จ เก็บไว้ในเบราว์เซอร์นี้ เปิดหน้ามาแสดงได้ทันที (ลบเมื่อกดออกจากระบบ) */
-function readCache(){ try { const c = JSON.parse(lsGet(LS.cache, 'null')); return c && Array.isArray(c.leads) ? c : null; } catch(e){ return null; } }
-function writeCache(r){ lsSet(LS.cache, JSON.stringify({ t: new Date().toISOString(), leads: r.leads || [], names: r.salesNames || {}, branches: r.branches || CFG.branches || [] })); }
+// ผูกข้อมูลที่จำไว้กับรหัสที่ใช้ตอนโหลด — ใส่รหัสอื่นจะไม่เห็นข้อมูลที่จำไว้
+const keyTag = k => { let h = 5381; for (const ch of String(k || '')) h = ((h << 5) + h + ch.charCodeAt(0)) >>> 0; return h.toString(36); };
+function readCache(){ try { const c = JSON.parse(lsGet(LS.cache, 'null')); return c && Array.isArray(c.leads) && c.k === keyTag(lsGet(LS.key, '')) ? c : null; } catch(e){ return null; } }
+function writeCache(r){ lsSet(LS.cache, JSON.stringify({ k: keyTag(lsGet(LS.key, '')), t: new Date().toISOString(), leads: r.leads || [], names: r.salesNames || {}, branches: r.branches || CFG.branches || [] })); }
 const hhmm = d => d.toLocaleString('th-TH', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
 function setMeta(t){ $('#dMeta').textContent = t; }
 
@@ -496,7 +498,7 @@ async function fetchData(){
     setMeta('โหลดข้อมูลไม่สำเร็จ — ดูผลตรวจการเชื่อมต่อด้านล่าง'); runDiag(); return;
   }
   if (!r.ok) {
-    if (r.error === 'bad_key') { lsSet(LS.key, null); lsSet(LS.cache, null); show('#dash', false); show('#gate', true); $('#keyErr').textContent = 'รหัสผู้ดูแลไม่ถูกต้อง — ดูรหัสได้ที่ชีต Settings ช่อง DASHBOARD_KEY'; $('#keyErr').classList.remove('hidden'); return; }
+    if (r.error === 'bad_key') { lsSet(LS.key, null); lsSet(LS.cache, null); D.leads = []; D.loadedAt = null; D.sel.clear(); applyFilters(); show('#dash', false); show('#gate', true); $('#keyErr').textContent = 'รหัสผู้ดูแลไม่ถูกต้อง — ดูรหัสได้ที่ชีต Settings ช่อง DASHBOARD_KEY'; $('#keyErr').classList.remove('hidden'); return; }
     setMeta('หลังบ้านแจ้งข้อผิดพลาด — ดูผลตรวจการเชื่อมต่อด้านล่าง'); runDiag(); return;
   }
   if (!Array.isArray(r.branches) && !CFG.loaded) await loadConfig(); // หลังบ้านรุ่นเก่ายังไม่ส่งสาขามาพร้อมกัน
