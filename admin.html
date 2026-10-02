@@ -294,6 +294,15 @@ a.tel{color:var(--true-ink);font-family:var(--mono);text-decoration:none;font-we
       <section class="card"><h2>เหตุผลที่ปิดเน็ตทรูไม่ได้</h2><div class="chartbox"><canvas id="cNetWhy"></canvas></div></section>
       <section class="card"><h2>ค่ายที่ลูกค้าใช้อยู่</h2><div class="chartbox"><canvas id="cProv"></canvas></div></section>
     </div>
+
+    <section class="card" id="rawCard" style="margin-top:12px">
+      <h2>ข้อมูลดิบ <span class="hint" id="rawCount"></span>
+        <span class="r"><input id="rawQ" class="inp" style="min-height:36px;padding:6px 10px;width:220px" placeholder="ค้นหา ชื่อ เบอร์ ร้าน รหัส…">
+        <button class="btn sm true" id="rawDel" disabled>ลบรายการที่เลือก</button></span>
+      </h2>
+      <div class="hint" style="margin:0 0 6px">ติ๊กเลือกรายการขยะหรือข้อมูลทดสอบ แล้วกด "ลบรายการที่เลือก" — ระบบจะย้ายไปเก็บในชีต Deleted ไม่ได้ลบทิ้งถาวร</div>
+      <div class="tbl-wrap" style="max-height:480px;overflow:auto"><table id="rawTbl"></table></div>
+    </section>
   </div>
 </main>
 
@@ -569,8 +578,55 @@ function renderAll(){
   const L = D.filtered, S = stats(L);
   safe('kpi', () => renderKpis(S)); safe('decide', () => renderDecide(L, S)); safe('district', () => renderDistrict(L, S));
   safe('leaderboard', () => renderLeaderboard(L, S)); safe('callbacks', () => renderCallbacks(L)); safe('installs', () => renderInstalls(L));
+  safe('raw', () => renderRaw(L));
   if (D.libs) renderVisual();
 }
+/* ข้อมูลดิบ + เลือกลบ */
+D.sel = new Set();
+const RAW_COLS = Object.keys(LABELS);
+function rawVal(l, c){ const v = l[c]; if (Array.isArray(v)) return v.join(', '); if (v === null || v === undefined) return ''; if ((c === 'createdAt' || c === 'updatedAt' || c === 'netClosedAt' || c === 'installedAt' || c === 'lotusOrderedAt') && v) return thDate(v); return String(v); }
+function renderRaw(L){
+  const q = ($('#rawQ').value || '').trim().toLowerCase();
+  const rows = q ? L.filter(l => RAW_COLS.some(c => rawVal(l, c).toLowerCase().includes(q))) : L;
+  const ids = new Set(D.leads.map(l => l.id)); [...D.sel].forEach(id => { if (!ids.has(id)) D.sel.delete(id); });
+  const allOn = rows.length && rows.every(l => D.sel.has(l.id));
+  $('#rawTbl').innerHTML = `<thead><tr><th><input type="checkbox" id="rawAll" ${allOn ? 'checked' : ''} aria-label="เลือกทั้งหมด"></th>${RAW_COLS.map(c => `<th>${esc(LABELS[c])}</th>`).join('')}</tr></thead><tbody>` +
+    (rows.length ? rows.map(l => `<tr><td><input type="checkbox" class="rawChk" data-id="${esc(l.id)}" ${D.sel.has(l.id) ? 'checked' : ''}></td>${RAW_COLS.map(c => `<td>${esc(rawVal(l, c))}</td>`).join('')}</tr>`).join('')
+      : `<tr><td class="empty" colspan="${RAW_COLS.length + 1}">ไม่มีข้อมูล</td></tr>`) + '</tbody>';
+  $('#rawCount').textContent = `${fmtN(rows.length)} รายการ` + (D.sel.size ? ` · เลือกไว้ ${fmtN(D.sel.size)}` : '');
+  $('#rawDel').disabled = !D.sel.size;
+  $('#rawDel').textContent = D.sel.size ? `ลบรายการที่เลือก (${D.sel.size})` : 'ลบรายการที่เลือก';
+}
+$('#rawQ').addEventListener('input', () => renderRaw(D.filtered));
+$('#rawTbl').addEventListener('change', e => {
+  if (e.target.id === 'rawAll') { $$('#rawTbl .rawChk').forEach(c => e.target.checked ? D.sel.add(c.dataset.id) : D.sel.delete(c.dataset.id)); }
+  else if (e.target.classList.contains('rawChk')) { e.target.checked ? D.sel.add(e.target.dataset.id) : D.sel.delete(e.target.dataset.id); }
+  renderRaw(D.filtered);
+});
+$('#rawDel').addEventListener('click', () => {
+  const list = D.leads.filter(l => D.sel.has(l.id)); if (!list.length) return;
+  const m = document.createElement('div'); m.className = 'modal';
+  m.innerHTML = `<div class="box"><h3>ลบ ${list.length} รายการ?</h3>
+    <div class="hint">รายการจะถูกย้ายไปเก็บในชีต Deleted ของ Google Sheet (ไม่ได้ลบทิ้งถาวร) และจะหายจากแดชบอร์ด</div>
+    <div class="tbl-wrap" style="max-height:240px;overflow:auto;margin:10px 0"><table><thead><tr><th>รหัส Lead</th><th>ร้าน / ลูกค้า</th><th>เบอร์</th><th>เซลล์</th><th>บันทึกเมื่อ</th></tr></thead><tbody>${list.map(l => `<tr><td>${esc(l.id)}</td><td>${esc(l.shopName)} / ${esc(l.custName)}</td><td>${esc(l.phone)}</td><td>${esc(l.salesCode)}</td><td>${esc(thDate(l.createdAt))}</td></tr>`).join('')}</tbody></table></div>
+    <label class="hint">เหตุผล (ไม่บังคับ)<input id="delWhy" class="inp" placeholder="เช่น ข้อมูลทดสอบ / กรอกผิด"></label>
+    <div style="display:flex;gap:8px;margin-top:12px"><button class="btn ghost" id="delNo" style="flex:1">ยกเลิก</button><button class="btn true" id="delYes" style="flex:1">ยืนยันลบ</button></div></div>`;
+  document.body.appendChild(m);
+  m.querySelector('#delNo').onclick = () => m.remove();
+  m.addEventListener('click', e => { if (e.target === m) m.remove(); });
+  m.querySelector('#delYes').onclick = async () => {
+    const b = m.querySelector('#delYes'); b.disabled = true; b.textContent = 'กำลังลบ… (อาจใช้เวลาสักครู่)';
+    try {
+      const r = await apiPost({ action:'deleteLeads', key: lsGet(LS.key, ''), ids: list.map(l => l.id), reason: m.querySelector('#delWhy').value });
+      if (!r.ok || !Array.isArray(r.deleted)) { toast(r.message || 'ลบไม่สำเร็จ', 'err'); b.disabled = false; b.textContent = 'ยืนยันลบ'; return; }
+      const gone = new Set(r.deleted); D.leads = D.leads.filter(l => !gone.has(l.id)); D.sel.clear();
+      writeCache({ leads: D.leads, salesNames: D.names, branches: CFG.branches });
+      m.remove(); applyFilters(); if (D.libs) renderVisual();
+      toast(`ย้าย ${r.deleted.length} รายการไปชีต Deleted แล้ว`, 'ok');
+    } catch(e) { toast('ลบไม่สำเร็จ — ตรวจสัญญาณอินเทอร์เน็ตแล้วลองใหม่', 'err'); b.disabled = false; b.textContent = 'ยืนยันลบ'; }
+  };
+});
+
 function renderVisual(){
   const L = D.filtered;
   safe('districtChart', () => renderDistrict(L, stats(L))); safe('map', () => renderMap(L)); safe('trend', () => renderTrend(L)); safe('breakdowns', () => renderBreakdowns(L));

@@ -232,6 +232,7 @@ a.tel{color:var(--true-ink);font-family:var(--mono);text-decoration:none;font-we
     <div class="fld" data-f="custName"><label for="custName" class="req">ชื่อลูกค้า</label><input id="custName" class="inp" autocomplete="off"><div class="errmsg">กรอกชื่อลูกค้า</div></div>
     <div class="fld" data-f="phone"><label for="phone" class="req">เบอร์โทร</label>
       <input id="phone" class="inp num" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="0XXXXXXXXX">
+      <div class="hint" id="phoneCount">0/10 หลัก</div>
       <div class="errmsg">เบอร์โทรต้องเป็นตัวเลข 10 หลัก ขึ้นต้นด้วย 0</div>
       <div id="dupBox" class="dup hidden"></div>
     </div>
@@ -451,9 +452,17 @@ $('#salesChange').addEventListener('click', () => { $('#salesCode').value = lsGe
 
 /* phone + duplicate */
 let phoneTimer = null, phoneReq = 0;
+// ตัวนับหลักใต้ช่องเบอร์ + เตือนทันทีเมื่อออกจากช่องแล้วยังไม่ครบ 10 หลัก
+function renderPhoneCount(){
+  const v = $('#phone').value, ok = /^0\d{9}$/.test(v);
+  $('#phoneCount').textContent = ok ? '✓ ครบ 10 หลัก' : `${v.length}/10 หลัก` + (v.length && v[0] !== '0' ? ' · ต้องขึ้นต้นด้วย 0' : '');
+  $('#phoneCount').style.color = ok ? 'var(--lotus-ink)' : '';
+}
+$('#phone').addEventListener('blur', () => { const v = $('#phone').value; if (v && !/^0\d{9}$/.test(v)) $('#phone').closest('.fld').classList.add('bad'); });
 $('#phone').addEventListener('input', e => {
   const v = e.target.value.replace(/\D/g,'').slice(0,10);
   if (e.target.value !== v) e.target.value = v;
+  renderPhoneCount();
   if (F.mode === 'update' && F.dupLead && F.dupLead.phone !== v) resetDup();
   clearTimeout(phoneTimer);
   if (/^0\d{9}$/.test(v)) phoneTimer = setTimeout(() => checkDup(v), 350);
@@ -604,7 +613,7 @@ function clearForm(){
   Object.keys(one).forEach(k => one[k] = ''); Object.values(multi).forEach(s => s.clear());
   Object.assign(F, { mode:'new', dupLead:null, lat:null, lng:null, acc:null, branch:'', branchDist:null });
   $('#gpsBtn').textContent = '📍 ปักหมุดตำแหน่งร้าน';
-  hideDup(); renderGps(); $$('.fld.bad').forEach(clearBad); updateVisibility();
+  hideDup(); renderGps(); $$('.fld.bad').forEach(clearBad); updateVisibility(); renderPhoneCount();
 }
 function loadIntoForm(d){
   clearForm();
@@ -615,6 +624,7 @@ function loadIntoForm(d){
   multi.netWhy = new Set(d.netWhy || []); updateVisibility();
   if (d.lat !== '' && d.lat !== null) Object.assign(F, { lat:d.lat, lng:d.lng, acc:d.gpsAccuracy, branch:d.nearestBranch || '', branchDist: d.nearestBranchDist === '' ? null : d.nearestBranchDist });
   renderGps();
+  renderPhoneCount();
 }
 
 /* offline queue */
